@@ -7,12 +7,12 @@ author:
     - line 1
     - line 2
     email:  cboettig@ropensci.org
-  - name: Dirk Eddlebuettel
-    affiliation: Debian, ...
+  - name: Dirk Eddelbuettel
+    affiliation: Debian and R Projects
     address:
     - line 1
     - line 2
-    email:  author2@work
+    email:  edd@debian.org
 abstract: >
   An abstract of less than 150 words.
 preamble: >
