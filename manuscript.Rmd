@@ -2,7 +2,7 @@
 title: "An Introduction to Rocker: Docker Containers for R"
 author:
   - name: Carl Boettiger
-    affiliation: UC Santa Cruz
+    affiliation: UC Berkeley 
     address:
     - line 1
     - line 2
@@ -25,7 +25,24 @@ output: rticles::rjournal_article
 Introductory section which may include references in parentheses
 \citep{R}, or cite a reference such as \citet{R} in the text.
 
+
+- Community-optimized images
+
+- Portability & cloud computing
+
+- Reproducibility
+
+- Convenience
+
+  - Installation of certain packages can be challenging and non-intuitive, particularly when those packages require specific external dependencies. 
+  - Many users are reluctant to upgrade their suite of installed packages.  Using the Rocker images, users can try out packages and run code without having to upgrade or otherwise alter their own system's R configuration, which may break existing work
+
+- Instruction
+
+
 ## An overview of Docker
+
+\citep{Boettiger2015}
 
 ## Rocker organization and workflow
 
@@ -46,9 +63,11 @@ Link to further details in Rocker wiki
 
 ## The r-devel image
 
+UBSAN, Clang
+
 example use
 
-## The rstudio image
+## rocker-versioned stack 
 
 example use
 
