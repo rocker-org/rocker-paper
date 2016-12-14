@@ -7,8 +7,8 @@ author:
     - ESPM Department, University of California,
     - 130 Mulford Hall Berkeley, CA 94720-3114, USA
     email:  cboettig@berkeley.edu
-  - name: Dirk Eddlebuettel
-    affiliation: Debian, ...
+  - name: Dirk Eddelbuettel
+    affiliation: Debian and R Projects
     address:
     - line 1
     - line 2
@@ -54,7 +54,7 @@ One of the most popular uses of the Rocker containers is to provide a fast and r
 
 The following code installs Docker on almost any Linux-based server and launches a Rocker container providing the RStudio-server environment over a web interface.
 
-```bash
+```
 wget -qO- https://get.docker.com/ | sh
 sudo docker run -d -p 80:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
 ```
