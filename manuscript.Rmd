@@ -30,7 +30,7 @@ Docker images containing the R environment \citep{edd2014}. Since that time, the
 considerable uptake in the community and substantial development and evolution. Here we seek to document
 the project's objectives and uses.
 
-What is Docker? 
+### What is Docker? 
 
 Docker is a popular open source tool to create, distribute, deploy, and run software applications using
 *containers*.  Containers provide a virtual environment requiring everything an application needs to run:
@@ -39,7 +39,45 @@ starting instantly, using a layered filesystem to minimize disk footprint and do
 that run on all major platforms (Linux, Mac, Windows) and provide an added layer of security by running an
 application in an isolated environment \citep{what-docker}.  
 
-What is a Rocker image?
+### Images in the Rocker Project
+
+The Rocker Project aims to provide a small core if Docker images that serve both as convenient base images for a wide range of possible applications while still providing a 'batteries included' approach of images that can be used out of the box.  The challenges of balancing diverse needs driven by very different use cases (discussed in more detail below) against the overarching goals of creating images that are not sufficiently light-weight, easy to use and easy to maintain is a difficult art.  The implementation in both individual Rocker images and image stacks can never perfect that balance for everyone, but today reflects the considerable community input and testing over past few years.  
+
+<!--What is a Dockerfile? How do they stack? -->
+
+
+
+<!-- some overview on using vs extending images (i.e. writing derivative Dockerfiles). -->
+
+
+
+The Rocker Project can be largely divided into two stacks which address different needs.  The first stack is based on `debian:testing`, the second, more recently introduced stack is based only on `debian` stable releases.  These stacks have different aims and thus provide different images, as shown in Tables 1 & 2.
+
+The Debian platform provides a small base image, the well known `apt` package management system and rich ecosystem of software libraries, making it the base image of choice for Docker images, including many of the "official" images maintained by Docker's own development team.  The Debian platform is also perhaps the best supported Linux platform within the R community, including an active `r-sig-debian` listserve.  Unfortunately, the relatively long period between stable Debian releases (roughly two years recently) means that software in the `debian:stable` releases can lag significantly behind current releases. This issue is the primary motivation behind the `debian:testing` stack.
+
+The Debian release cycle follows three stages: `unstable`, `testing`, and `stable`. 
+
+The `debian:testing` stack aims to makes the most efficient use of upstream builds -- the precompiled `.deb` binaries provided by the Debian repositories.  It is both quicker and easier to install software from binaries, since the package manager (`apt`) manages the necessary dependencies and it bypasses the time-consuming process of compiling from source.  Basing this stack on `debian:testing` means that much more recent versions of commonly used libraries and compilers are available as binaries than would be found in a Debian stable release.  In order to provide access to the most recent avialble binaries, this stack uses apt-pinning [@apt-pinning] to allow the `apt` package manager to also install binaries from `debian:unstable`, which represents the most recent, bleeding edge of packages built for Debian when necessary.  For instance, the `r-base` image provided by Rocker installs the most recent version of R as a binary from Debian `unstable`.  Similarly, recent versions of many popular R packages can also be installed through the package manager, e.g. `apt-get install r-cran-XML`.  This can be particularly helpful for packages with external system dependencies (such as `libxml2-dev` in this example) which cannot be installed from the R console.  
+
+As the names `testing` and `unstable` imply, this approach is not without a downside.  The particular version of any given package can change as packages move from `unstable` into `testing` and newer versions are sent to `unstable` during the normal course of Debian development.  This can occassionally break an previously working installation command in a Dockerfile until the maintainer redirects the package manager to install a the package from the `unstable` sources that could previously be installed from `testing`, or vice versa (using the `-t` option in `apt`, see Box 1 on apt-pinning.)  
+
+The `debian:testing` stack thus offers the following advantages: 
+
+1. These Dockerfiles are easy to develop and extend because almost all software can be installed through the package manager
+2. These Dockerfiles always install the most recent available software
+
+and these down-sides:
+
+1. These Dockerfiles require occassional minor maintenance to ensure successful builds
+2. The resulting images are inherently dynamic: rebuilding the same Dockerfile months or years apart will generate images with significantly different versions of software installed.
+3. The use of apt pinning may be unfamiliar to some users.
+
+### debian-stable stack
+
+This stack emphasizes stability and reproducibility of the Docker build.
+
+
+
 
 
 There are several different but complementary reasons for creating the containerized R environments provided by
@@ -59,11 +97,24 @@ wget -qO- https://get.docker.com/ | sh
 sudo docker run -d -p 80:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
 ```
 
-After running these two lines, the user may log into the server merely by pasting its IP address or DNS name into a browser and entering their password for user `rstudio`.  This provides the user with a familiar, interactive environment running on a remote machine while requiring a minimum of expertise (with many cloud providers, these two lines of code can be run in a startup script without ever logging into the server over ssh).  Some caveats and additional configuration options are discussed in the example section below.  The user can select a Rocker container which contains the required software pre-installed, such as `rocker/tidyverse`, which provides the popular `tidyverse` suite of R packages \citep(tidyverse), or even use their own containers which can extend the Rocker containers, as discussed below.  This workflow saves considerable time relative to installing each package from scratch, which can take over an hour to reconstruct the environment provided by some rocker containers.  As many commericial cloud providers charge by the hour, a fast and simple mechanism to deploy the desired environment in the cloud is crucial to making this approach practical for more exploratory analyses.  
+After running these two lines, the user may log into the server merely by pasting its IP address or DNS name into a browser and entering their password for user `rstudio`.  This provides the user with a familiar, interactive environment running on a remote machine while requiring a minimum of expertise (with many cloud providers, these two lines of code can be run in a startup script without ever logging into the server over ssh).  Some caveats and additional configuration options are discussed in the example section below.  The user can select a Rocker container which contains the required software pre-installed, such as `rocker/tidyverse`, which provides the popular `tidyverse` suite of R packages \citep{tidyverse}, or even use their own containers which can extend the Rocker containers, as discussed below.  This workflow saves considerable time relative to installing each package from scratch, which can take over an hour to reconstruct the environment provided by some rocker containers.  As many commericial cloud providers charge by the hour, a fast and simple mechanism to deploy the desired environment in the cloud is crucial to making this approach practical for more exploratory analyses.  
 
-Unlike virtual machine images, multiple such Docker containers can be run on the same server in the same way (though unique TCP ports must be assigned to each). More importantly, it is much easier to test software locally using the identical Docker container environment before deploying on a remote server than it is to run a virtual machine such as an Amazon Machine Image (AMI) locally, or to reproduce the runtime environment identically on local and server systems.
+<!--
+FIXME describe other modes of running containers, e.g. R terminal
 
-Of course Rocker images may be used for quickly deploying R code on remote servers without the use of the RStudio interface, running R in terminal mode over an `ssh` connection or simply in batch mode.  
+
+-->
+
+Unlike virtual machine images, multiple such Docker containers can be run on the same server in the same way (though unique TCP ports must be assigned to each if they are accessed through the RStudio web interface). More importantly, it is much easier to test software locally using the identical Docker container environment before deploying on a remote server than it is to run a virtual machine such as an Amazon Machine Image (AMI) locally, or to reproduce the runtime environment identically on local and server systems.
+
+Rocker images may be used for quickly deploying R code on remote servers without the use of the RStudio interface, running R in terminal mode over an `ssh` connection. As with any interactive docker instance, users should specify the interactive (`-i`) and terminal (`-t`, here combined with interactive as `-ti`) flags, and specify the desired executable environment (e.g. `R`, though other common options may be `Rscript` or `bash`):   
+
+```
+docker run --rm -ti rocker/tidyverse R
+```
+
+This example shows the use of the `--rm` flag to indicate that the container should be removed when the interactive session is finished. 
+
 
 Another illustration of this portability is with regard to Continuous Integration servers such as Travis <https://travis.com> or Circle-CI <https://circle-ci.com>.  While support for the R language on Travis has greatly improved recently (\citep{r-travis}), very customized environments can still be difficult to run (particularly for testing scripts not laid out in the R package structure).  
 
