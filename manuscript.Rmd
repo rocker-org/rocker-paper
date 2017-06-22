@@ -19,8 +19,11 @@ abstract: >
   organized and how these tools can increase portability, scaling, reproducibility,
   and convenience of R users and developers.
 preamble: >
-  % Any extra latex you need in the preamble
-output: rticles::rjournal_article
+   \usepackage{longtable}
+   \usepackage{svg}
+output: 
+  rticles::rjournal_article:
+        latex_engine: lualatex
 ---
 
 ## Introduction
@@ -38,6 +41,19 @@ code, runtime, system tools, system runtime.  Docker containers are lightweight 
 starting instantly, using a layered filesystem to minimize disk footprint and download time), built on open standards
 that run on all major platforms (Linux, Mac, Windows) and provide an added layer of security by running an
 application in an isolated environment \citep{what-docker}.  
+
+
+
+
+## Rocker organization and workflow
+
+The Rocker Project consists of a suite of images built automatically by and hosted on the Docker Hub, <https://hub.docker.com/r/rocker>.  Source Dockerfiles, supporting scripts and documentation are hosted on GitHub.  The issues tracker and pull requests are used to provide community input, disucssions and contributions to these images. The rocker project wiki <https://github.com/rocker-org/rocker/wiki> provides a place to synthesize community-contributed documentation, use-cases, and other knowledge about using the Rocker images.
+
+
+- GitHub, Docker Hub (Docker Cloud)
+
+ Automated builds on Docker Hub help ensure the integrity of the build process and ensure that the image build corresponds exactly to Dockerfile on GitHub.
+
 
 ### Images in the Rocker Project
 
@@ -79,34 +95,65 @@ and these down-sides:
 ### debian-stable base
 
 This stack emphasizes stability and reproducibility of the Docker build.  The key feature of this stack is the ability to run older versions of R, along with the contemporaneous versions of R packages.  A user specifies the version desired using an image tag, e.g. 
-`rocker/r-ver:3.3.1` will refer to an image with R version 3.3.1 installed.  Omitting the tag is equivalent to using the tag `latest`, which, as the name implies, will always point to an image using the current R release.  Thus, users wanting to create downstream Dockerfiles which are based on the current release at time but will continue to reconstruct the same environment in the future after newer R versions are released should explicilty include the corresponding version tag, e.g. `rocker/r-ver:3.4.0` at the time of writing, and not the `latest` tag.  Users can also run the current development version of R using the tag `devel`, which is built nightly from R-devel sources.
+`rocker/r-ver:3.3.1` will refer to an image with R version 3.3.1 installed.  Omitting the tag is equivalent to using the tag `latest`, which, as the name implies, will always point to an image using the current R release.  Thus, users wanting to create downstream Dockerfiles which are based on the current release at time but will continue to reconstruct the same environment in the future after newer R versions are released should explicilty include the corresponding version tag, e.g. `rocker/r-ver:3.4.0` at the time of writing, and not the `latest` tag.  Users can also run the current development version of R using the tag `devel`, which is built nightly from R-devel sources from `subversion`.
 
-To facilitate installation of only contemporaneous versions of R packages on these images, the default CRAN mirror from which to install R packages is fixed to a snapshot of CRAN corresponding to the last date for which that version of R was the latest release. These snapshots are provided by the MRAN archive created by Revolution Analytics (now aquired by Microsoft), which archives daily snapshots of all of CRAN, from which a user can install packages with the usual `install.packages()` function  [@MRAN]. Users can always override this default by passing any current CRAN repository explicitly.  Unlike CRAN, Bioconductor only updates its repositories through bi-annual releases aligned to R's Spring release schedule, Bioconductor packages be installed in the usual way using `bioclite`, which automatically selects the Bioconductor release corresponding to the version of R in use.   
+**MRAN archives**: To facilitate installation of only contemporaneous versions of R packages on these images, the default CRAN mirror from which to install R packages is fixed to a snapshot of CRAN corresponding to the last date for which that version of R was the latest release. These snapshots are provided by the MRAN archive created by Revolution Analytics (now aquired by Microsoft), which archives daily snapshots of all of CRAN, from which a user can install packages with the usual `install.packages()` function  [@MRAN]. Users can always override this default by passing any current CRAN repository explicitly.  Unlike CRAN, Bioconductor only updates its repositories through bi-annual releases aligned to R's Spring release schedule, Bioconductor packages be installed in the usual way using `bioclite`, which automatically selects the Bioconductor release corresponding to the version of R in use.   
 
-These version tags are propegated throughout this stack: for instance, `rocker/tidyverse:devel` will provide the currently released versions of the R packages in the `tidyverse` [@tidyverse] installed on the nightly build of R-devel.  Developers building packages on this stack are encouraged to tag their images accordingly as well.  Table 3 indicates which versions of R are currently available in the stack, going back to `3.1.0`.  While older versions may be added to the stack at a later date, we note that the MRAN snapshots began in starting 2014-09-17 and thus go back only to R `3.1` era.
-
-In this stack, the desired version of R is always built directly from source.  Compilers and dependencies are still installed from the stable `apt` repositories, and thus lag behind the more recent versions found in the `testing` stack.  Dependencies needed to compile R that are not required at runtime are removed once R is installed, keeping the base images light-weight for faster download times.  While most system dependencies required by common R packages can still be installed from the `apt` repositories, occassionally a more recent version must be compiled from source (e.g. the Gibbs Sampling library, JAGS, and the geospatial toolkit GDAL, must both be compiled from source on images based on the Debian 8.0 release, codenamed `debian:jessie`).  In this stack, users should never install R packages using `apt`, since this will install a second, older version of R from the Debian repositories and a dated version of the R package.  These 
+**Version tags**:  These version tags are propegated throughout this stack: for instance, `rocker/tidyverse:devel` will provide the currently released versions of the R packages in the `tidyverse` [@tidyverse] installed on the nightly build of R-devel.  Developers building packages on this stack are encouraged to tag their images accordingly as well.  Table 3 indicates which versions of R are currently available in the stack, going back to `3.1.0`.  While older versions may be added to the stack at a later date, we note that the MRAN snapshots began in starting 2014-09-17 and thus go back only to R `3.1` era.  Each tag must be built from a separate Dockerfile, enabling minor differences in the build instructions to accomidate changing dependencies.  Dockerfiles for past versions (e.g. < `3.4.0` currently) are intended to remain static over the long term, while the tag for the current version, `latest`, and `devel` may be tweaked to accomidate new features or dependencies.  
 
 
+In this stack, the desired version of R is always built directly from source rather than the `apt` repositories.  Compilers and dependencies are still installed from the stable `apt` repositories, and thus lag behind the more recent versions found in the `testing` stack. Version tags `3.3.3` and older are based on the Debian 8.0 release, codenamed `jessie`, while `3.4.0`, `devel`, and `latest` are based on Debian 9.0, `stretch`, released 2017-06-17, and thus have access to much newer versions of common system dependencies and compilers.  Dependencies needed to compile R that are not required at runtime are removed once R is installed, keeping the base images light-weight for faster download times.  While most system dependencies required by common R packages can still be installed from the `apt` repositories, occassionally a more recent version must be compiled from source (e.g. the Gibbs Sampling library, JAGS, and the geospatial toolkit GDAL, must both be compiled from source on `debian:jessie` images).  In this stack, users should never install R packages, using `apt`, since this will install a second, older version of R from the Debian repositories and a dated version of the R package (since any `r-cran-pkgname` package in the Debian repositories will depend on `r-base` in `apt` as well).  
 
 
-### Images
-
-The image `rocker/r-ver` is the functional equivalent of `r-base`, though slightly pared down.  Currently `r-ver` has tags for all minor R versions back to `3.1.0` (as far back as MRAN snapshots of CRAN are avialable); see [all tags](https://hub.docker.com/r/rocker/r-ver/tags). Users can attempt to build other versions from the `r-ver` Dockerfile by specifying `--build-arg R_VERSION=<VERSION>`, though this is unlikely to work with very old R versions.  Likewise, all non-current images are automatically pinned to a MRAN snapshot of CRAN from the last day that version was current.  Users can set a custom snapshot date for the `r-ver` images by using `--build-arg BUILD_DATE=<DATE>` when building that Dockerfile. 
-
-The image `rocker/tidyverse` is the functional equivalent of `rocker/hadleyverse`, minus the LaTeX part which is moved into a downstream `rocker/verse` in order to keep the `tidyverse` image more compact.  Now that [tidyverse](https://cran.r-project.org/web/packages/tidyverse/index.html) is a thing, the term "hadleyverse" is on the way out. 
- 
-The `rocker/rstudio` image builds with RStudio `v1.0.44` by default. This can be customized by specifying the desired version in `--build-arg RSTUDIO_VERSION=<VERSION>` if building locally from its Dockerfile. *Note that:* `rocker/rstudio:latest` is the only image name in this stack that already existed.  For consistency, `rocker/rstudio:latest` now builds on `r-ver:latest` instead of `r-base:latest`.  This change may break downstream images, which should either build explicitly on the `debian:testing` stack by using the `testing` tag (`rocker/rstudio:testing`) or be patched to support this change.
+**Build schedule**: All images are built automatically from their corresponding Dockerfiles (found in the GitHub repositories `rocker-org/rocker-versioned` and `rocker-org/geospatial`). A `cron` job sends nightly build triggers to Docker Hub to rebuild the `latest` and `devel` tagged images throughout the stack.  To decrease load on the hub, build triggers for the numeric version tags are sent monthly. Allthough the Dockerfiles for older R versions installs an almost-identical software environment every time, the monthly rebuilding of these images on Docker Hub ensures they continue to recieve Debian security updates from upstream, and proves the build recipe still executes successfully.   Note that rebuilding images with software from external repositories never produces a bitwise identical image, and thus the image identifier hash will change at each build.  
 
 
+image            | description                               | size   | downloads 
+---------------- | ----------------------------------------- | ------ | ------- 
+[r-ver](https://hub.docker.com/r/rocker/r-ver)          |  Version-stable base R & src build tools  | 219 MB | 2,000
+[rstudio](https://hub.docker.com/r/rocker/rstudio)      |  Adds rstudio                             | 334 MB | 285,000
+[tidyverse](https://hub.docker.com/r/rocker/tidyverse)  |  Adds tidyverse & devtools                | 656 MB | 14,000
+[verse](https://hub.docker.com/r/rocker/verse)          |  Adds java, tex & publishing-related packages   | 947 MB | 4,000
+[geospatial](https://hub.docker.com/r/rocker/geospatial)|  Adds geospatial libraries   |  1.3 GB | 1,000
+
+Table: The `rocker-versioned` stack of images
 
 
-image            |  Dockerfiles  
----------------- | -------------
-[r-ver](https://hub.docker.com/r/rocker/r-ver/tags)         | [![](https://img.shields.io/badge/Dockerfile-latest-blue.svg)](https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/Dockerfile) [![](https://img.shields.io/badge/Dockerfile-v3.3.2-blue.svg)](https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/3.3.2/Dockerfile)  [![](https://img.shields.io/badge/Dockerfile-...-blue.svg)](https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/)  [![](https://img.shields.io/badge/Dockerfile-v3.1.0-blue.svg)](https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/3.1.0/Dockerfile) 
-[rstudio](https://hub.docker.com/r/rocker/rstudio/tags)     |  [![](https://img.shields.io/badge/Dockerfile-latest-blue.svg)](https://github.com/rocker-org/rocker-versioned/blob/master/rstudio/Dockerfile) [![](https://img.shields.io/badge/Dockerfile-v3.3.2-blue.svg)](https://github.com/rocker-org/rocker/blob/master/rstudio/3.3.2/Dockerfile)  [![](https://img.shields.io/badge/Dockerfile-v3.3.1-blue.svg)](https://github.com/rocker-org/rocker/blob/master/rstudio/3.3.1/Dockerfile) 
-[tidyverse](https://hub.docker.com/r/rocker/tidyverse/tags) | [![](https://img.shields.io/badge/Dockerfile-latest-blue.svg)](https://github.com/rocker-org/rocker-versioned/blob/master/tidyverse/Dockerfile) [![](https://img.shields.io/badge/Dockerfile-v3.3.2-blue.svg)](https://github.com/rocker-org/rocker-versioned/blob/master/tidyverse/3.3.2/Dockerfile)   [![](https://img.shields.io/badge/Dockerfile-v3.3.1-blue.svg)](https://github.com/rocker-org/rocker-versioned/blob/master/tidyverse/3.3.1/Dockerfile) 
-[verse](https://hub.docker.com/r/rocker/verse/tags)         |  [![](https://img.shields.io/badge/Dockerfile-latest-blue.svg)](https://github.com/rocker-org/rocker-versioned/blob/master/verse/Dockerfile) [![](https://img.shields.io/badge/Dockerfile-v3.3.2-blue.svg)](https://github.com/rocker-org/rocker-versioned/blob/master/verse/3.3.2/Dockerfile)  [![](https://img.shields.io/badge/Dockerfile-v3.3.1-blue.svg)](https://github.com/rocker-org/rocker-versioned/blob/master/verse/3.3.1/Dockerfile) 
+image            | description                               | size   | downloads 
+---------------- | ----------------------------------------- | ------ | ------- 
+[r-base](https://hub.docker.com/r/_/r-base)        | Version-stable base R & src build tools  | 254 MB | 510,000   
+[r-devel](https://hub.docker.com/r/rocker/r-devel) |  R-devel added side-by-side r-base (using alias `RD`)    | 1 GB | 4,000
+[r-devel-san](https://hub.docker.com/r/rocker/r-devel-san)  |  as r-devel, but built with compiler sanatizers | 1.1 GB  | 1,000  
+[r-devel-ubsan-clan](https://hub.docker.com/r/rocker/r-devel-ubsan-clang)            |  Sanatizers, clang c compiler (instead of gcc) | 1.1 GB | 525
+[rstudio:testing](https://hub.docker.com/r/rocker/r-devel-san)        |  rstudio on debian:testing | 1.1 GB | 1,000 
+[shiny](https://hub.docker.com/r/rocker/shiny)     |  shiny-server on r-base               | 409 MB | 63,000
+
+Table: the `debian:testing` image stack
+
+
+tag     | apt repos | MRAN date    | Build frequency  | images with tag 
+--------|-----------|--------------|------------------|-------------------------------           
+devel   | `stretch` | current date | nigthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
+latest  | `stretch` | current date | nightly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
+3.4.0   | `stretch` | current date | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
+3.3.3   | `jessie`  | 2017-04-21   | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial` 
+3.3.2   | `jessie`  | 2017-03-06   | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
+3.3.1   | `jessie`  | 2016-10-31   | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
+3.3.0   | `jessie`  | 2016-06-21   | monthly          | `r-ver`
+3.2.0   | `jessie`  | 2015-06-18   | monthly          | `r-ver`
+3.1.0   | `jessie`  | 2014-09-17   | monthly          | `r-ver`
+
+Table: Available tags in the `rocker-versioned` stack.  
+
+
+Customizing builds: `--build-arg` options in `r-ver`: `R_VERSION`, `BUILD_DATE`. in `rstudio`: `RSTUDIO_VERSION`, `PANDOC_TEMPLATES_VERSION`.  
+Docker metadata labels: <http://schema-label.org> metadata for `license`, `vcs-url` (GitHub repository), and `vendor`.  These can be altered or extended in downstream images. 
+
+
+
+
+
+
 
 
 ## Maintenance and Updates
@@ -123,6 +170,7 @@ These images are actively maintained.  This means that while an effort is made t
 The Dockerfiles in this repository are licensed under the GPL 2 or later.
 
 
+# Use cases
 
 
 There are several different but complementary reasons for creating the containerized R environments provided by
@@ -182,10 +230,6 @@ Rocker images benefit from widespread use, testing and contributions from many m
 ### Instruction
 
 
-## Rocker organization and workflow
-
-The Rocker Project consists of a suite of images built automatically by and hosted on the Docker Hub, <https://hub.docker.com/r/rocker>.  Source Dockerfiles, supporting scripts and documentation are hosted on GitHub.  The issues tracker and pull requests are used to provide community input, disucssions and contributions to these images. The rocker project wiki <https://github.com/rocker-org/rocker/wiki> provides a place to synthesize community-contributed documentation, use-cases, and other knowledge about using the Rocker images.
-
 - Table of main repos, links to Docker-Hub & GitHub addresses
 
 - list/table of topics on the wiki
@@ -198,36 +242,8 @@ The Rocker Project consists of a suite of images built automatically by and host
 
 Image dependency graph
 
-## The r-base image
-
-The r-base image is the official, verified Docker image for R.  Written and maintained by the Rocker developers on behalf of the Docker project, this image is built and hosted directly by Docker's own developers, who also approve any changes or updates to the image.  
-
-example use.
-
-Link to further details in Rocker wiki
-
-## The r-devel images
-
-These images provide both the current and under-development versions of R, including images with particular compiler option configurations (UBSAN, clang).  Package authors submitting R packages to the Central R Archive Network (CRAN) are expected to test their packages on both current and development versions of R prior to submission.  
-
-
-## rocker-versioned stack 
-
-example use
-
-screenshot
-
-Custom configurations
-
-Link to further details in Rocker wiki
-
-## Additional images
-
-## Metrics of use
-
-
 ## Summary
 
-This file is only a basic article template. For full details of _The R Journal_ style and information on how to prepare your article for submission, see the [Instructions for Authors](http://journal.r-project.org/latex/RJauthorguide.pdf).
+This file is only a basic article template. For full details of _The R Journal_ style and information on how to prepare your article for submission, see the [Instructions for Authors](https://journal.r-project.org/share/author-guide.pdf).
 
 \bibliography{RJreferences}
