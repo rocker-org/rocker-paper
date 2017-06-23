@@ -21,9 +21,7 @@ abstract: >
 preamble: >
    \usepackage{longtable}
    \usepackage{svg}
-output: 
-  rticles::rjournal_article:
-        latex_engine: lualatex
+output: rticles::rjournal_article
 ---
 
 ## Introduction
@@ -47,39 +45,24 @@ application in an isolated environment \citep{what-docker}.
 
 ## Rocker organization and workflow
 
-The Rocker Project consists of a suite of images built automatically by and hosted on the Docker Hub, <https://hub.docker.com/r/rocker>.  Source Dockerfiles, supporting scripts and documentation are hosted on GitHub.  The issues tracker and pull requests are used to provide community input, disucssions and contributions to these images. The rocker project wiki <https://github.com/rocker-org/rocker/wiki> provides a place to synthesize community-contributed documentation, use-cases, and other knowledge about using the Rocker images.
-
-
-- GitHub, Docker Hub (Docker Cloud)
-
- Automated builds on Docker Hub help ensure the integrity of the build process and ensure that the image build corresponds exactly to Dockerfile on GitHub.
+The Rocker Project consists of a suite of images built automatically by and hosted on the Docker Hub, <https://hub.docker.com/r/rocker>.  Source Dockerfiles, supporting scripts and documentation are hosted on GitHub under the organization `rocker-org`, <https://github.com/rocker-org>.  The issues tracker and pull requests are used to provide community input, disucssions and contributions to these images. The rocker project wiki provides a place to synthesize community-contributed documentation, use-cases, and other knowledge about using the Rocker images.
 
 
 ### Images in the Rocker Project
 
-The Rocker Project aims to provide a small core if Docker images that serve both as convenient base images for a wide range of possible applications while still providing a 'batteries included' approach of images that can be used out of the box.  The challenges of balancing diverse needs driven by very different use cases (discussed in more detail below) against the overarching goals of creating images that are not sufficiently light-weight, easy to use and easy to maintain is a difficult art.  The implementation in both individual Rocker images and image stacks can never perfect that balance for everyone, but today reflects the considerable community input and testing over past few years.  
-
-<!--What is a Dockerfile? How do they stack? -->
+The Rocker Project aims to provide a small core if Docker images that serve as convenient 'base' images on which other users can build custom R environments by writing their own Dockerfiles, while also providing a 'batteries included' approach of images that can be used out of the box.  The challenges of balancing diverse needs driven by very different use cases (discussed in more detail below) against the overarching goals of creating images that are not sufficiently light-weight, easy to use and easy to maintain is a difficult art.  The implementation in both individual Rocker images and image stacks can never perfect that balance for everyone, but today reflects the considerable community input and testing over past few years.  
 
 
-
-<!-- some overview on using vs extending images (i.e. writing derivative Dockerfiles). -->
-
+All Rocker images are based on the Debian Linux Distribution.  The Debian platform provides a small base image, the well known `apt` package management system and rich ecosystem of software libraries, making it the base image of choice for Docker images, including many of the "official" images maintained by Docker's own development team.  The Debian platform is also perhaps the best supported Linux platform within the R community, including an active `r-sig-debian` listserve.  Unfortunately, the relatively long period between stable Debian releases (roughly two years recently) means that software in the `debian:stable` releases can lag significantly behind current releases of popular software, including R.  More recent versions of packages can be found in the pre-release distribution, `debian:testing`, while the very latest binary builds can be found on `debian:unstable`.  The Rocker Project can be largely divided into two stacks which address different needs, defined by which Debian distribution they are based on.  The first stack is based on `debian:testing`, the second, more recently introduced stack is based only on `debian` stable releases.  These stacks have different aims and thus provide different images, as shown in Tables 1 & 2.
 
 
-The Rocker Project can be largely divided into two stacks which address different needs.  The first stack is based on `debian:testing`, the second, more recently introduced stack is based only on `debian` stable releases.  These stacks have different aims and thus provide different images, as shown in Tables 1 & 2.
-
-The Debian platform provides a small base image, the well known `apt` package management system and rich ecosystem of software libraries, making it the base image of choice for Docker images, including many of the "official" images maintained by Docker's own development team.  The Debian platform is also perhaps the best supported Linux platform within the R community, including an active `r-sig-debian` listserve.  Unfortunately, the relatively long period between stable Debian releases (roughly two years recently) means that software in the `debian:stable` releases can lag significantly behind current releases. This issue is the primary motivation behind the `debian:testing` stack.
-
-The Debian release cycle follows three stages: `unstable`, `testing`, and `stable`. 
-
-## The debian:testing base
+## The `debian:testing`-based images
 
 The `debian:testing` stack aims to makes the most efficient use of upstream builds -- the precompiled `.deb` binaries provided by the Debian repositories.  It is both quicker and easier to install software from binaries, since the package manager (`apt`) manages the necessary dependencies and it bypasses the time-consuming process of compiling from source.  Basing this stack on `debian:testing` means that much more recent versions of commonly used libraries and compilers are available as binaries than would be found in a Debian stable release.  In order to provide access to the most recent avialble binaries, this stack uses apt-pinning [@apt-pinning] to allow the `apt` package manager to also install binaries from `debian:unstable`, which represents the most recent, bleeding edge of packages built for Debian when necessary.  For instance, the `r-base` image provided by Rocker installs the most recent version of R as a binary from Debian `unstable`.  Similarly, recent versions of many popular R packages can also be installed through the package manager, e.g. `apt-get install r-cran-XML`.  This can be particularly helpful for packages with external system dependencies (such as `libxml2-dev` in this example) which cannot be installed from the R console.  
 
 As the names `testing` and `unstable` imply, this approach is not without a downside.  The particular version of any given package can change as packages move from `unstable` into `testing` and newer versions are sent to `unstable` during the normal course of Debian development.  This can occassionally break an previously working installation command in a Dockerfile until the maintainer redirects the package manager to install a the package from the `unstable` sources that could previously be installed from `testing`, or vice versa (using the `-t` option in `apt`, see Box 1 on apt-pinning.)  
 
-The `debian:testing` stack thus offers the following advantages: 
+Relative to `stable`, the `debian:testing` stack thus offers the following advantages: 
 
 1. These Dockerfiles are easy to develop and extend because almost all software can be installed through the package manager
 2. These Dockerfiles always install the most recent available software
@@ -87,48 +70,75 @@ The `debian:testing` stack thus offers the following advantages:
 
 and these down-sides:
 
-1. These Dockerfiles require occassional minor maintenance to ensure successful builds
+1. These Dockerfiles require occassional minor maintenance to ensure successful builds. (e.g. changing an installation directive from `unstable` to `testing` or vice versa)
 2. The resulting images are inherently dynamic: rebuilding the same Dockerfile months or years apart will generate images with significantly different versions of software installed.
-3. The use of apt pinning may be unfamiliar to some users.
-4. `testing` and `unstable` do not recieve the same attention to security updates.
+3. The use of apt pinning may be unfamiliar to some users, where the user must ultimately be responsible to ensure compatibility [@apt-pinning].
+4. `testing` and `unstable` do not recieve the attention to security updates from the Debian security team.
 
-### debian-stable base
 
-This stack emphasizes stability and reproducibility of the Docker build.  The key feature of this stack is the ability to run older versions of R, along with the contemporaneous versions of R packages.  A user specifies the version desired using an image tag, e.g. 
+### Images overview
+
+The `debian:testing`-based stack currently includes seven images actively maintained by the Rocker development team (Table 1).  `r-base` builds on `debian:testing`, and the other six in the stack each build directly from `r-base`.  The `r-base` image is unique in that it is designated as the official image for the R language by the Docker organization itself.  This image is reviewed and built by employees of Docker Inc from the Dockerfile maintained by the Rocker team.  Consequently, users should refer to this image in Docker commands without an organization napespace, e.g. `docker pull r-base` to access the official image.  All other images in the Rocker project are not individually reviewed and built by Docker Inc and must be refered to require the organization namespace on Docker Hub, e.g. `docker pull rocker/r-devel`.  
+
+Several of the images in this stack are oriented towards the R development community. `r-devel`, `drd`, `r-devel-san` & `r-devel-ubsan-clang` all add a copy of the development version of R side-by-side the current release of R provided by `r-base`.  On these images, the development version is aliased to `RD` to distinguish from the current release, `R`.  As the names suggest, each provide slightly different configurations.  Of particular interest are the images providing development R built with support for C/C++ address sanitizers, which are notoriously difficult to configure [@edd_sanitizers].
+
+As these images focus on developers and/or as base images for custom uses, this stack does include many specific R packages. Additional dependencies and packages can easily be installed from `apt`.  R packages not available in the `apt` repositories can be installed directly from CRAN using the `littler` scripts, see *Extending Rocker images* section below.  
+
+This stack also include the images `shiny` and `rstudio:testing` that provide Shiny server and RStudio server IDE from RStudio Inc, built on the `r-base` image.  RStudio and Shiny are registered trademarks of RStudio Inc, and their use and the distibution of their software in binary form on Docker Hub has been granted to the Rocker project by explicit permission from RStudio. Users should review RStudio's trademark use policy (<http://www.rstudio.com/about/trademark/>) and address inquiries about further distribution or other questions to <permissions@rstudio.com>.  The Rocker project also provides images with RStudio server and Shiny server in the stable versioned stack.  
+
+
+**Build schedule**: The official `r-base` image is rebuilt by Docker following any updates to the official `debian` images (roughly every few weeks).  The rest of the stack uses build triggers that rebuild the images either whenever `r-base` is updated or the Dockerfile sources are updated on the corresponding GitHub repository.  The only exception in this stack is the `drd` image, which is rebuilt each week by cron trigger.
+
+
+image            | description                               | size   | downloads 
+---------------- | ----------------------------------------- | ------ | ------- 
+[r-base](https://hub.docker.com/r/_/r-base)        | official image with current version of R  | 254 MB | 510,000   
+[r-devel](https://hub.docker.com/r/rocker/r-devel) |  R-devel added side-by-side r-base (using alias `RD`)    | 1 GB | 4,000
+[drd](https://hub.docker.com/r/rocker/drd) |  lightweight r-devel, built almost daily  | 571 MB | 4,000
+[r-devel-san](https://hub.docker.com/r/rocker/r-devel-san)  |  as r-devel, but built with compiler sanatizers | 1.1 GB  | 1,000  
+[r-devel-ubsan-clang](https://hub.docker.com/r/rocker/r-devel-ubsan-clang)            |  Sanitizers, clang c compiler (instead of gcc) | 1.1 GB | 525
+[rstudio:testing](https://hub.docker.com/r/rocker/r-devel-san)        |  rstudio on debian:testing | 1.1 GB | 1,000 
+[shiny](https://hub.docker.com/r/rocker/shiny)     |  shiny-server on r-base               | 409 MB | 63,000
+
+Table: the `debian:testing` image stack
+
+<!-- Should we mention r-apt separately? -->
+
+<!-- Do we describe version tags of r-base, which do provide older versions of R but are based on Dockerfiles which will no longer build since the requested R version is no longer in `unstable`?  -->
+
+### The `debian:stable`-based stack 
+
+This stack emphasizes stability and reproducibility of the Docker build.  This stack was introduced much more recently, starting in November of 2016, in response to considerable user input and requests. The key feature of this stack is the ability to run older versions of R, along with the contemporaneous versions of R packages.  A user specifies the version desired using an image tag, e.g. 
 `rocker/r-ver:3.3.1` will refer to an image with R version 3.3.1 installed.  Omitting the tag is equivalent to using the tag `latest`, which, as the name implies, will always point to an image using the current R release.  Thus, users wanting to create downstream Dockerfiles which are based on the current release at time but will continue to reconstruct the same environment in the future after newer R versions are released should explicilty include the corresponding version tag, e.g. `rocker/r-ver:3.4.0` at the time of writing, and not the `latest` tag.  Users can also run the current development version of R using the tag `devel`, which is built nightly from R-devel sources from `subversion`.
 
-**MRAN archives**: To facilitate installation of only contemporaneous versions of R packages on these images, the default CRAN mirror from which to install R packages is fixed to a snapshot of CRAN corresponding to the last date for which that version of R was the latest release. These snapshots are provided by the MRAN archive created by Revolution Analytics (now aquired by Microsoft), which archives daily snapshots of all of CRAN, from which a user can install packages with the usual `install.packages()` function  [@MRAN]. Users can always override this default by passing any current CRAN repository explicitly.  Unlike CRAN, Bioconductor only updates its repositories through bi-annual releases aligned to R's Spring release schedule, Bioconductor packages be installed in the usual way using `bioclite`, which automatically selects the Bioconductor release corresponding to the version of R in use.   
+**MRAN archives**: To facilitate installation of only contemporaneous versions of R packages on these images, the default CRAN mirror from which to install R packages is fixed to a snapshot of CRAN corresponding to the last date for which that version of R was the latest release. These snapshots are provided by the MRAN archive created by Revolution Analytics (now aquired by Microsoft), which archives daily snapshots of all of CRAN, from which a user can install packages with the usual `install.packages()` function  [@MRAN]. Users can always override this default by passing any current CRAN repository explicitly.  Unlike CRAN, Bioconductor only updates its repositories through bi-annual releases aligned to R's Spring release schedule. Thus, Bioconductor packages can be installed in the usual way using `bioclite`, which automatically selects the Bioconductor release corresponding to the version of R in use.   
 
 **Version tags**:  These version tags are propegated throughout this stack: for instance, `rocker/tidyverse:devel` will provide the currently released versions of the R packages in the `tidyverse` [@tidyverse] installed on the nightly build of R-devel.  Developers building packages on this stack are encouraged to tag their images accordingly as well.  Table 3 indicates which versions of R are currently available in the stack, going back to `3.1.0`.  While older versions may be added to the stack at a later date, we note that the MRAN snapshots began in starting 2014-09-17 and thus go back only to R `3.1` era.  Each tag must be built from a separate Dockerfile, enabling minor differences in the build instructions to accomidate changing dependencies.  Dockerfiles for past versions (e.g. < `3.4.0` currently) are intended to remain static over the long term, while the tag for the current version, `latest`, and `devel` may be tweaked to accomidate new features or dependencies.  
 
+**Installation**: In this stack, the desired version of R is always built directly from source rather than the `apt` repositories.  Compilers and dependencies are still installed from the stable `apt` repositories, and thus lag behind the more recent versions found in the `testing` stack. Version tags `3.3.3` and older are based on the Debian 8.0 release, codenamed `jessie`, while `3.4.0`, `devel`, and `latest` are based on Debian 9.0, `stretch`, released 2017-06-17, and thus have access to much newer versions of common system dependencies and compilers.  Dependencies needed to compile R that are not required at runtime are removed once R is installed, keeping the base images light-weight for faster download times.  While most system dependencies required by common R packages can still be installed from the `apt` repositories, occassionally a more recent version must be compiled from source (e.g. the Gibbs Sampling library, JAGS, and the geospatial toolkit GDAL, must both be compiled from source on `debian:jessie` images).  In this stack, users should never install R packages, using `apt`, since this will install a second, older version of R from the Debian repositories and a dated version of the R package (since any `r-cran-pkgname` package in the Debian repositories will depend on `r-base` in `apt` as well).  
 
-In this stack, the desired version of R is always built directly from source rather than the `apt` repositories.  Compilers and dependencies are still installed from the stable `apt` repositories, and thus lag behind the more recent versions found in the `testing` stack. Version tags `3.3.3` and older are based on the Debian 8.0 release, codenamed `jessie`, while `3.4.0`, `devel`, and `latest` are based on Debian 9.0, `stretch`, released 2017-06-17, and thus have access to much newer versions of common system dependencies and compilers.  Dependencies needed to compile R that are not required at runtime are removed once R is installed, keeping the base images light-weight for faster download times.  While most system dependencies required by common R packages can still be installed from the `apt` repositories, occassionally a more recent version must be compiled from source (e.g. the Gibbs Sampling library, JAGS, and the geospatial toolkit GDAL, must both be compiled from source on `debian:jessie` images).  In this stack, users should never install R packages, using `apt`, since this will install a second, older version of R from the Debian repositories and a dated version of the R package (since any `r-cran-pkgname` package in the Debian repositories will depend on `r-base` in `apt` as well).  
+
+**Build schedule**: All images are built automatically from their corresponding Dockerfiles (found in the GitHub repositories `rocker-org/rocker-versioned` and `rocker-org/geospatial`). A `cron` job sends nightly build triggers to Docker Hub to rebuild the `latest` and `devel` tagged images throughout the stack.  To decrease load on the hub, build triggers for the numeric version tags are sent monthly. Although the Dockerfiles for older R versions installs an almost-identical software environment every time, the monthly rebuilding of these images on Docker Hub ensures they continue to recieve Debian security updates from upstream, and proves the build recipe still executes successfully.   Note that rebuilding images with software from external repositories never produces a bitwise identical image, and thus the image identifier hash will change at each build.  
 
 
-**Build schedule**: All images are built automatically from their corresponding Dockerfiles (found in the GitHub repositories `rocker-org/rocker-versioned` and `rocker-org/geospatial`). A `cron` job sends nightly build triggers to Docker Hub to rebuild the `latest` and `devel` tagged images throughout the stack.  To decrease load on the hub, build triggers for the numeric version tags are sent monthly. Allthough the Dockerfiles for older R versions installs an almost-identical software environment every time, the monthly rebuilding of these images on Docker Hub ensures they continue to recieve Debian security updates from upstream, and proves the build recipe still executes successfully.   Note that rebuilding images with software from external repositories never produces a bitwise identical image, and thus the image identifier hash will change at each build.  
+### Images overview
 
+In this stack, each image builds on the previous image, rather than all other images building directly on the base image, as in the `testing` stack. Table 2 lists the names and descriptions of the five images in this stack, along with image size and approximate download counts from Docker Hub.  Sizes reflect (compressed) cumulative size: a user who has already downloaded the most recent version of `r-ver` and then pulls a copy of `rstudio` image will only need to download the additional 115 MB in the `rstudio` layers and not the full 334 MB listed.  This linear design limits flexibility (no option for `tidyverse` without `rstudio`) but simplifies use and maintance.  While no single environment will be optimal for everyone, both the packages selected in this stack and the stack ordering reflect considerable community input and tuning. 
+
+The `rstudio` image includes a lightweight, easy-to-use and docker-friendly `init` system, s6 [@s6] for running persistant services, including the RStudio server.  This system provides a convenient way for downstream Dockerfile developers to add additional persistent services (such as an ssh server) to a single container, or additional start-up or shutdown scripts that should be run when an instance starts up or shuts down.  The `rstudio` image uses such a start-up script to configure user settings such as login password and permissions through environmental variables at run time, see *Using Rocker Images* below.
+
+The `tidyverse` image contains all required and suggested dependencies of the commonly used `tidyverse` and `devtools` R packages, including external database libraries (e.g. Maria-DB and Postgresql).  Users should consult the package Dockerfiles or `installed.packages()` list directly for a complete list of installed packages.  The `verse` library adds commonly used dependencies, notably a large but not comprehensive LaTeX environment and java development libraries.  Previously the Rocker project provided the image `hadleyverse` which was since divided into `tidyverse` and `verse` through community input.
 
 image            | description                               | size   | downloads 
 ---------------- | ----------------------------------------- | ------ | ------- 
 [r-ver](https://hub.docker.com/r/rocker/r-ver)          |  Version-stable base R & src build tools  | 219 MB | 2,000
 [rstudio](https://hub.docker.com/r/rocker/rstudio)      |  Adds rstudio                             | 334 MB | 285,000
-[tidyverse](https://hub.docker.com/r/rocker/tidyverse)  |  Adds tidyverse & devtools                | 656 MB | 14,000
+[tidyverse](https://hub.docker.com/r/rocker/tidyverse)  |  Adds tidyverse & devtools                | 656 MB | 14,000 (+46,000 as `hadleyverse`)
 [verse](https://hub.docker.com/r/rocker/verse)          |  Adds java, tex & publishing-related packages   | 947 MB | 4,000
 [geospatial](https://hub.docker.com/r/rocker/geospatial)|  Adds geospatial libraries   |  1.3 GB | 1,000
 
 Table: The `rocker-versioned` stack of images
 
-
-image            | description                               | size   | downloads 
----------------- | ----------------------------------------- | ------ | ------- 
-[r-base](https://hub.docker.com/r/_/r-base)        | Version-stable base R & src build tools  | 254 MB | 510,000   
-[r-devel](https://hub.docker.com/r/rocker/r-devel) |  R-devel added side-by-side r-base (using alias `RD`)    | 1 GB | 4,000
-[r-devel-san](https://hub.docker.com/r/rocker/r-devel-san)  |  as r-devel, but built with compiler sanatizers | 1.1 GB  | 1,000  
-[r-devel-ubsan-clan](https://hub.docker.com/r/rocker/r-devel-ubsan-clang)            |  Sanatizers, clang c compiler (instead of gcc) | 1.1 GB | 525
-[rstudio:testing](https://hub.docker.com/r/rocker/r-devel-san)        |  rstudio on debian:testing | 1.1 GB | 1,000 
-[shiny](https://hub.docker.com/r/rocker/shiny)     |  shiny-server on r-base               | 409 MB | 63,000
-
-Table: the `debian:testing` image stack
 
 
 tag     | apt repos | MRAN date    | Build frequency  | images with tag 
@@ -146,15 +156,14 @@ latest  | `stretch` | current date | nightly          | `r-ver`, `rstudio`, `tid
 Table: Available tags in the `rocker-versioned` stack.  
 
 
-Customizing builds: `--build-arg` options in `r-ver`: `R_VERSION`, `BUILD_DATE`. in `rstudio`: `RSTUDIO_VERSION`, `PANDOC_TEMPLATES_VERSION`.  
-Docker metadata labels: <http://schema-label.org> metadata for `license`, `vcs-url` (GitHub repository), and `vendor`.  These can be altered or extended in downstream images. 
+Several images in the `rocker-versioned` stack can be customized on build when built locally (rather than pulling prebuilt images from Docker Hub) by using the `--build-arg` option of `docker build`.   In the `r-ver` image, users can set `R_VERSION`, `BUILD_DATE` (MRAN default snapshot).  In the `rstudio` image users can set `RSTUDIO_VERSION` (otherwise defaults to the most recent version), and the `PANDOC_TEMPLATES_VERSION` .  
+
+<!--
+This stack also makes use of Docker metadata labels: <http://schema-label.org> metadata for `license`, `vcs-url` (GitHub repository), and `vendor`.  These can be altered or extended in downstream images. 
+-->
 
 
-
-
-
-
-
+<!--
 
 ## Maintenance and Updates
 
@@ -169,8 +178,40 @@ These images are actively maintained.  This means that while an effort is made t
 
 The Dockerfiles in this repository are licensed under the GPL 2 or later.
 
+--> 
 
-# Use cases
+
+
+## Using Rocker images
+
+While more detailed documentation on the use of Rocker images can be found on the Rocker wiki, we provide a conceptual overview here which illustrates common patterns and capabilities.
+
+**Interactive shell**: 
+
+**RStudio instance**: 
+
+**Linking local volumes**: Docker 
+
+Users of the Docker's GUI interface, Kitematic who use the `rstudio`-derived images will automatically have their local kitematic directory linked to the `/home/rstudio/kitematic` directory on the Docker container.
+
+**Root vs user instances**: By default, all rocker containers run as root. This is consistent with standard Docker practice, allowing both interactive users and downstream Dockerfiles to install software directly without having to switch to root.  The main snag of this approach comes if a user links a local volume and modifies files on that volume, which will result in the local file being owned by `root` and not the default user.  To avoid this, specify the non-root user at runtime (username `docker` on the `r-base` stack, or `rstudio` on images deriving from rstudio) when running an interactive shell.  For users accessing R through RStudio, this is not necessary.  The docker container will run as root, but a user logs in through the RStudio server web interface as the non-root user "rstudio", and thus any changes made to linked volumes will not alter file permissions on the home directory.  For more details on user permissions, see the Rocker wiki.  
+
+
+## Extending Rocker images
+
+Often Rocker images are not deployed directly, but used as a base image onto which users add software for their own needs in a custom Dockerfile.  We offer a few recommendations here to streamline writing these extensions and promote best practices.  
+
+- littler scripts
+
+ To streamline the installation of R packages in downstream Dockerfiles, the `r-base` image provides `littler` package [@littler] and associated `install2.r` script, enabling users to install additional packages with a command such as:
+
+    install2.r pkg1 pgk2 pkg3 ...
+
+- Dockerfile best practices
+- automated builds, build triggers
+- version-stable builds
+
+## Use cases
 
 
 There are several different but complementary reasons for creating the containerized R environments provided by
@@ -181,7 +222,7 @@ We describe these in turn before presenting the commands required to deploy thes
 
 ### Portability & cloud computing
 
-One of the most popular uses of the Rocker containers is to provide a fast and reliable mechanism to deploy an R envionment on a remote server, such as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean, NSF's Jetstream servers, or private or institutional server hardware.  Being able to test code in a predictable, pre-configured R environment on a local machine and then run the same code in an identical environment on a remote server (e.g. for access to greater RAM, more processors, or merely to free up the local machine from a long-running computation) is essential for low-friction scaling of analysis.  Without such contanerization, getting code to run appropriately in a remote environment can be a major undertaking, requiring both time and knowledge many would-be users may not have. 
+One common use case for Rocker containers is to provide a fast and reliable mechanism to deploy an R envionment on a remote server, such as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean, NSF's Jetstream servers, or private or institutional server hardware.  Being able to test code in a predictable, pre-configured R environment on a local machine and then run the same code in an identical environment on a remote server (e.g. for access to greater RAM, more processors, or merely to free up the local machine from a long-running computation) is essential for low-friction scaling of analysis.  Without such contanerization, getting code to run appropriately in a remote environment can be a major undertaking, requiring both time and knowledge many would-be users may not have. 
 
 The following code installs Docker on almost any Linux-based server and launches a Rocker container providing the RStudio-server environment over a web interface.
 
@@ -202,9 +243,9 @@ Unlike virtual machine images, multiple such Docker containers can be run on the
 
 Rocker images may be used for quickly deploying R code on remote servers without the use of the RStudio interface, running R in terminal mode over an `ssh` connection. As with any interactive docker instance, users should specify the interactive (`-i`) and terminal (`-t`, here combined with interactive as `-ti`) flags, and specify the desired executable environment (e.g. `R`, though other common options may be `Rscript` or `bash`):   
 
-```
-docker run --rm -ti rocker/tidyverse R
-```
+
+    docker run --rm -ti rocker/tidyverse R
+
 
 This example shows the use of the `--rm` flag to indicate that the container should be removed when the interactive session is finished. 
 
@@ -234,16 +275,5 @@ Rocker images benefit from widespread use, testing and contributions from many m
 
 - list/table of topics on the wiki
 
-
-
-
-
-## Rocker base images
-
-Image dependency graph
-
-## Summary
-
-This file is only a basic article template. For full details of _The R Journal_ style and information on how to prepare your article for submission, see the [Instructions for Authors](https://journal.r-project.org/share/author-guide.pdf).
 
 \bibliography{RJreferences}
