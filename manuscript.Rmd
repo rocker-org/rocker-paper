@@ -189,7 +189,7 @@ server in the stable versioned stack.
 **Build schedule**: The official `r-base` image is rebuilt by Docker
 following any updates to the official `debian` images (roughly every
 few weeks).  The rest of the stack uses build triggers that rebuild the
-images either whenever `r-base` is updated or the Dockerfile sources are
+images either whenever `r-base` is updated, or the Dockerfile sources are
 updated on the corresponding GitHub repository.  The only exception in
 this stack is the `drd` image, which is rebuilt each week by cron trigger.
 
@@ -206,16 +206,18 @@ image            | description                               | size   | download
 
 Table: the `debian:testing` image stack
 
-<!-- Should we mention r-apt separately? -->
+<!-- CB: Should we mention r-apt separately? -->
+<!-- DE: Or maybe not at all. It is somewhat specialised. -->
 
-<!-- Do we describe version tags of r-base, which do provide older versions of R but are based on Dockerfiles which will no longer build since the requested R version is no longer in `unstable`?  -->
+<!-- CB: Do we describe version tags of r-base, which do provide older versions of R but are based on Dockerfiles which will no longer build since the requested R version is no longer in `unstable`?  -->
+<!-- DE: Not sure. -->
 
 ### The `debian:stable`-based stack 
 
 This stack emphasizes stability and reproducibility of the Docker build.
-This stack was introduced much more recently, starting in November
-of 2016, in response to considerable user input and requests. The key
-feature of this stack is the ability to run older versions of R, along
+This stack was introduced much more recently (November 2016) 
+in response to considerable user input and requests. The key
+feature of this stack is the ability to run older versions of R along
 with the contemporaneous versions of R packages.  A user specifies the
 version desired using an image tag, e.g.  `rocker/r-ver:3.3.1` will
 refer to an image with R version 3.3.1 installed.  Omitting the tag
@@ -234,8 +236,8 @@ versions of R packages on these images, the default CRAN mirror from which
 to install R packages is fixed to a snapshot of CRAN corresponding to
 the last date for which that version of R was the latest release. These
 snapshots are provided by the MRAN archive created by Revolution
-Analytics (now aquired by Microsoft), which archives daily snapshots
-of all of CRAN, from which a user can install packages with the usual
+Analytics (now part of Microsoft). It archives daily snapshots
+of all of CRAN from which a user can install packages with the usual
 `install.packages()` function  [@MRAN]. Users can always override this
 default by passing any current CRAN repository explicitly.  Unlike CRAN,
 Bioconductor only updates its repositories through bi-annual releases
@@ -256,7 +258,7 @@ be built from a separate Dockerfile, enabling minor differences in the
 build instructions to accomidate changing dependencies.  Dockerfiles for
 past versions (e.g. < `3.4.0` currently) are intended to remain static
 over the long term, while the tag for the current version, `latest`,
-and `devel` may be tweaked to accomidate new features or dependencies.
+and `devel` may be tweaked to accomodate new features or dependencies.
 
 **Installation**: In this stack, the desired version of R is always built
 directly from source rather than the `apt` repositories.  Compilers and
@@ -277,6 +279,7 @@ packages, using `apt`, since this will install a second, older version
 of R from the Debian repositories and a dated version of the R package
 (since any `r-cran-pkgname` package in the Debian repositories will
 depend on `r-base` in `apt` as well).
+<!-- DE: Likely a non-issue as /usr/local is always search before /usr. -->
 
 
 **Build schedule**: All images are built automatically from
@@ -313,7 +316,7 @@ The `rstudio` image includes a lightweight, easy-to-use and
 docker-friendly `init` system, s6 [@s6] for running persistant services,
 including the RStudio server.  This system provides a convenient way for
 downstream Dockerfile developers to add additional persistent services
-(such as an ssh server) to a single container, or additional start-up
+(such as an `ssh` server) to a single container, or additional start-up
 or shutdown scripts that should be run when an instance starts up or
 shuts down.  The `rstudio` image uses such a start-up script to configure
 user settings such as login password and permissions through environmental
@@ -321,11 +324,11 @@ variables at run time, see *Using Rocker Images* below.
 
 The `tidyverse` image contains all required and suggested dependencies
 of the commonly used `tidyverse` and `devtools` R packages, including
-external database libraries (e.g. Maria-DB and Postgresql).  Users should
+external database libraries (e.g. MariaDB and PostgreSQL).  Users should
 consult the package Dockerfiles or `installed.packages()` list directly
 for a complete list of installed packages.  The `verse` library adds
 commonly used dependencies, notably a large but not comprehensive LaTeX
-environment and java development libraries.  Previously the Rocker
+environment and Java development libraries.  Previously the Rocker
 project provided the image `hadleyverse` which was since divided into
 `tidyverse` and `verse` through community input.
 
@@ -509,7 +512,7 @@ see the Rocker wiki.
 
 ### Convenience
 
-Installation of certain R packages can be challenging and non-intuitive,
+Installation of certain R packages can be challenging,
 particularly when those packages require specific external
 dependencies. By running R through a Rocker image, users can deploy an
 R environment where their desired packages and libraries have already
@@ -521,7 +524,7 @@ compiler sanatizers \citep{edd_sanitizers}, which requires R itself
 be re-compiled with specialized settings not avaialable or familiar
 to most R users.  Using the Rocker images `rocker/r-devel-san` and
 `rocker/r-devel-ubsan-clang` provides a fast and simple way for users
-to test
+to test.
 
 Many users are reluctant to upgrade their suite of installed packages,
 which may break their existing code or even their R environment if the
@@ -553,7 +556,7 @@ and promote best practices.
 
 - Dockerfile best practices 
 - automated builds, build triggers 
- - version-stable builds
+- version-stable builds
 
 
 ### Reproducibility
