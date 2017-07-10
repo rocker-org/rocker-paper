@@ -8,13 +8,12 @@ author:
     - 130 Mulford Hall Berkeley, CA 94720-3114, USA
     email:  cboettig@berkeley.edu
   - name: Dirk Eddelbuettel
-    affiliation: Debian and R Projects
-    address:
-    - line 1
-    - line 2
+    affiliation: Debian and R Projects; Ketchum Trading
+    address: 
+    - Chicago, IL, USA
     email:  edd@debian.org
 abstract: >
-  We describe the Rocker project, which provides a widely used suite of Docker images
+  We describe the Rocker project, which provides a widely-used suite of Docker images
   with customized R environments for particular tasks. We discuss how this suite is
   organized and how these tools can increase portability, scaling, reproducibility,
   and convenience of R users and developers.
@@ -41,14 +40,13 @@ and evolution. Here we seek to document the project's objectives and uses.
 
 Docker is a popular open source tool to create, distribute, deploy,
 and run software applications using *containers*.  Containers provide a
-virtual environment requiring everything an application needs to run:
+virtual environment requiring all operating-system components an application needs to run:
 code, runtime, system tools, system runtime.  Docker containers are
-lightweight (sharing the operating system kernel, starting instantly,
-using a layered filesystem to minimize disk footprint and download time),
-built on open standards that run on all major platforms (Linux, Mac,
-Windows) and provide an added layer of security by running an application
+lightweight as they share the operating system kernel, starting instantly,
+using a layered filesystem which minimizes disk footprint and download time,
+and are built on open standards that run on all major platforms (Linux, Mac,
+Windows), and provide an added layer of security by running an application
 in an isolated environment \citep{what-docker}.
-
 
 
 
@@ -58,7 +56,7 @@ The Rocker Project consists of a suite of images built automatically by
 and hosted on the Docker Hub, <https://hub.docker.com/r/rocker>.  Source
 Dockerfiles, supporting scripts and documentation are hosted on GitHub
 under the organization `rocker-org`, <https://github.com/rocker-org>.
-The issues tracker and pull requests are used to provide community input,
+The issues tracker and pull requests are used for community input,
 disucssions and contributions to these images. The rocker project wiki
 provides a place to synthesize community-contributed documentation,
 use-cases, and other knowledge about using the Rocker images.
@@ -66,13 +64,13 @@ use-cases, and other knowledge about using the Rocker images.
 
 ### Images in the Rocker Project
 
-The Rocker Project aims to provide a small core if Docker images that
+The Rocker Project aims to provide a small core of Docker images that
 serve as convenient 'base' images on which other users can build custom
 R environments by writing their own Dockerfiles, while also providing a
 'batteries included' approach of images that can be used out of the box.
 The challenges of balancing diverse needs driven by very different use
 cases (discussed in more detail below) against the overarching goals
-of creating images that are not sufficiently light-weight, easy to use
+of creating images that are still sufficiently light-weight, easy to use
 and easy to maintain is a difficult art.  The implementation in both
 individual Rocker images and image stacks can never perfect that balance
 for everyone, but today reflects the considerable community input and
@@ -80,7 +78,7 @@ testing over past few years.
 
 
 All Rocker images are based on the Debian Linux Distribution.
-The Debian platform provides a small base image, the well known `apt`
+The Debian platform provides a small base image, the well-known `apt`
 package management system and rich ecosystem of software libraries,
 making it the base image of choice for Docker images, including many
 of the "official" images maintained by Docker's own development team.
@@ -105,9 +103,9 @@ The `debian:testing` stack aims to makes the most efficient use of
 upstream builds -- the precompiled `.deb` binaries provided by the
 Debian repositories.  It is both quicker and easier to install software
 from binaries, since the package manager (`apt`) manages the necessary
-dependencies and it bypasses the time-consuming process of compiling
+(binary) dependencies and bypasses the time-consuming process of compiling
 from source.  Basing this stack on `debian:testing` means that much more
-recent versions of commonly used libraries and compilers are available
+recent versions of commonly-used libraries and compilers are available
 as binaries than would be found in a Debian stable release.  In order
 to provide access to the most recent avialble binaries, this stack uses
 apt-pinning [@apt-pinning] to allow the `apt` package manager to also
@@ -116,13 +114,14 @@ bleeding edge of packages built for Debian when necessary.  For instance,
 the `r-base` image provided by Rocker installs the most recent version of
 R as a binary from Debian `unstable`.  Similarly, recent versions of many
 popular R packages can also be installed through the package manager,
-e.g. `apt-get install r-cran-XML`.  This can be particularly helpful
+e.g. `apt-get install r-cran-xml`.  This can be particularly helpful
 for packages with external system dependencies (such as `libxml2-dev`
-in this example) which cannot be installed from the R console.
+in this example) which cannot be installed from the R console as they 
+are system dependencies rather than R packages installed from within R.
 
 As the names `testing` and `unstable` imply, this approach is not
-without a downside.  The particular version of any given package can
-change as packages move from `unstable` into `testing` and newer versions
+without challenges.  The particular version of any given package can
+change as packages move from `unstable` into `testing`. New versions
 are sent to `unstable` during the normal course of Debian development.
 This can occassionally break an previously working installation command
 in a Dockerfile until the maintainer redirects the package manager to
@@ -142,7 +141,7 @@ and these down-sides:
 2. The resulting images are inherently dynamic: rebuilding the same Dockerfile months or years apart will generate images with significantly different versions of software installed.
 3. The use of apt pinning may be unfamiliar to some users, where the user must ultimately be responsible to ensure compatibility [@apt-pinning].
 4. `testing` and `unstable` do not recieve the attention to security updates from the Debian security team.
-
+<!-- DE: Are you sure about that point 4 ? -->
 
 ### Images overview
 
