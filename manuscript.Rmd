@@ -20,9 +20,14 @@ abstract: >
   and convenience of R users and developers.
 preamble: >
    \usepackage{longtable}
-   \usepackage{svg}
 output: rticles::rjournal_article
 ---
+
+
+<!-- Notes to Dirk: 
+     Some of this material may be more appropriate for documentation elsewhere, appearing here in only abbreviated form.  
+     To get started, I've just tried to err on the side of comprehensive, particularly since our documentation in places is sparse
+     or dated.  Feel free to flag any areas that should be moved in part or whole to documentation.  -->
 
 ## Introduction
 
@@ -383,7 +388,94 @@ The Dockerfiles in this repository are licensed under the GPL 2 or later.
 
 
 
-## Using Rocker images
+
+
+
+
+
+## Design principles & use cases
+
+- Portable: from laptop to cloud
+- Sandboxed: experiment without touching local system
+- Optimized: community-tweaked configurations
+- Interfaces: Console-based (R, bash, etc) or RStudio\textsuperscript{\textregistered} Server, Shiny\textsuperscript{\textregistered} server
+- Extensible: interactively and persistent community extensions
+- Versioned: 
+
+research use, instructional use
+
+### Portability: From laptop to cloud
+
+One common use case for Rocker containers is to provide a fast and
+reliable mechanism to deploy a custom R envionment to a remote server, such
+as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean, NSF's
+Jetstream servers, or private or institutional server hardware.  Being
+able to test code in a predictable, pre-configured R environment on a
+local machine and then run the same code in an identical environment on a
+remote server (e.g. for access to greater RAM, more processors, or merely
+to free up the local machine from a long-running computation) is essential
+for low-friction scaling of analysis.  Without such contanerization,
+getting code to run appropriately in a remote environment can be a major
+undertaking, requiring both time and knowledge many would-be users may
+not have.
+
+The following code installs Docker on almost any Linux-based server and
+launches a Rocker container providing the RStudio-server environment
+over a web interface.
+
+    wget -qO- https://get.docker.com/ | sh 
+    sudo docker run -d -p 80:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
+
+After running these two lines, the user may log into the server merely
+by pasting its IP address or DNS name into a browser and entering the
+appropriate password.  This provides the user with a familiar,
+interactive environment running on a remote machine while requiring
+a minimum of expertise.   
+
+The user can select a Rocker
+container which contains the required software pre-installed, such as
+`rocker/tidyverse`, which provides the popular `tidyverse` suite of R
+packages \citep{tidyverse}, or even use their own containers which can
+extend the Rocker containers, as discussed below.  This workflow saves
+considerable time relative to installing each package from scratch,
+which can take over an hour to reconstruct the environment provided by
+some rocker containers.  As many commericial cloud providers charge by
+the hour, a fast and simple mechanism to deploy the desired environment
+in the cloud is crucial to making this approach practical for more
+exploratory analyses.
+
+
+
+Unlike virtual machine images, multiple such Docker containers can
+be run on the same server in the same way (though unique TCP ports
+must be assigned to each if they are accessed through the RStudio web
+interface). More importantly, it is much easier to test software locally
+using the identical Docker container environment before deploying on
+a remote server than it is to run a virtual machine such as an Amazon
+Machine Image (AMI) locally, or to reproduce the runtime environment
+identically on local and server systems.
+
+### Interfaces
+
+
+Rocker images may be used for quickly deploying R code on remote servers
+without the use of the RStudio interface, running R in terminal mode
+over an `ssh` connection. As with any interactive docker instance, users
+should specify the interactive (`-i`) and terminal (`-t`, here combined
+with interactive as `-ti`) flags, and specify the desired executable
+environment (e.g. `R`, though other common options may be `Rscript` or
+`bash`):
+
+
+    docker run --rm -ti rocker/tidyverse R
+
+
+This example shows the use of the `--rm` flag to indicate that the
+container should be removed when the interactive session is finished.
+
+
+
+
 
 While more detailed documentation on the use of Rocker images can be
 found on the Rocker wiki, we provide a conceptual overview here which
@@ -416,117 +508,6 @@ permissions on the home directory.  For more details on user permissions,
 see the Rocker wiki.
 
 
-## Extending Rocker images
-
-Often Rocker images are not deployed directly, but used as a base image
-onto which users add software for their own needs in a custom Dockerfile.
-We offer a few recommendations here to streamline writing these extensions
-and promote best practices.
-
-- littler scripts
-
- To streamline the installation of R packages in downstream Dockerfiles,
- the `r-base` image provides `littler` package [@littler] and associated
- `install2.r` script, enabling users to install additional packages with
- a command such as:
-
-    install2.r pkg1 pgk2 pkg3 ...
-
-- Dockerfile best practices 
-- automated builds, build triggers 
- - version-stable builds
-
-## Use cases
-
-
-There are several different but complementary reasons for creating the
-containerized R environments provided by the Rocker project, including
-convenience, community input, portability and scaling, reproducibility,
-and instruction.  We describe these in turn before presenting the commands
-required to deploy these environments in different use cases.
-
-
-
-### Portability & cloud computing
-
-One common use case for Rocker containers is to provide a fast and
-reliable mechanism to deploy an R envionment on a remote server, such
-as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean, NSF's
-Jetstream servers, or private or institutional server hardware.  Being
-able to test code in a predictable, pre-configured R environment on a
-local machine and then run the same code in an identical environment on a
-remote server (e.g. for access to greater RAM, more processors, or merely
-to free up the local machine from a long-running computation) is essential
-for low-friction scaling of analysis.  Without such contanerization,
-getting code to run appropriately in a remote environment can be a major
-undertaking, requiring both time and knowledge many would-be users may
-not have.
-
-The following code installs Docker on almost any Linux-based server and
-launches a Rocker container providing the RStudio-server environment
-over a web interface.
-
-    wget -qO- https://get.docker.com/ | sh 
-    sudo docker run -d -p 80:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
-
-After running these two lines, the user may log into the server merely
-by pasting its IP address or DNS name into a browser and entering their
-password for user `rstudio`.  This provides the user with a familiar,
-interactive environment running on a remote machine while requiring
-a minimum of expertise (with many cloud providers, these two lines
-of code can be run in a startup script without ever logging into the
-server over ssh).  Some caveats and additional configuration options are
-discussed in the example section below.  The user can select a Rocker
-container which contains the required software pre-installed, such as
-`rocker/tidyverse`, which provides the popular `tidyverse` suite of R
-packages \citep{tidyverse}, or even use their own containers which can
-extend the Rocker containers, as discussed below.  This workflow saves
-considerable time relative to installing each package from scratch,
-which can take over an hour to reconstruct the environment provided by
-some rocker containers.  As many commericial cloud providers charge by
-the hour, a fast and simple mechanism to deploy the desired environment
-in the cloud is crucial to making this approach practical for more
-exploratory analyses.
-
-<!--
-FIXME describe other modes of running containers, e.g. R terminal
-
-
--->
-
-Unlike virtual machine images, multiple such Docker containers can
-be run on the same server in the same way (though unique TCP ports
-must be assigned to each if they are accessed through the RStudio web
-interface). More importantly, it is much easier to test software locally
-using the identical Docker container environment before deploying on
-a remote server than it is to run a virtual machine such as an Amazon
-Machine Image (AMI) locally, or to reproduce the runtime environment
-identically on local and server systems.
-
-Rocker images may be used for quickly deploying R code on remote servers
-without the use of the RStudio interface, running R in terminal mode
-over an `ssh` connection. As with any interactive docker instance, users
-should specify the interactive (`-i`) and terminal (`-t`, here combined
-with interactive as `-ti`) flags, and specify the desired executable
-environment (e.g. `R`, though other common options may be `Rscript` or
-`bash`):
-
-
-    docker run --rm -ti rocker/tidyverse R
-
-
-This example shows the use of the `--rm` flag to indicate that the
-container should be removed when the interactive session is finished.
-
-
-Another illustration of this portability is with regard to Continuous
-Integration servers such as Travis <https://travis.com> or Circle-CI
-<https://circle-ci.com>.  While support for the R language on Travis has
-greatly improved recently (\citep{r-travis}), very customized environments
-can still be difficult to run (particularly for testing scripts not laid
-out in the R package structure).
-
-
 ### Convenience
 
 Installation of certain R packages can be challenging and non-intuitive,
@@ -555,6 +536,27 @@ impacting their local system.
 
 Rocker images benefit from widespread use, testing and contributions from many members of the R community.  
 
+## Extending Rocker images
+
+Often Rocker images are not deployed directly, but used as a base image
+onto which users add software for their own needs in a custom Dockerfile.
+We offer a few recommendations here to streamline writing these extensions
+and promote best practices.
+
+- littler scripts
+
+ To streamline the installation of R packages in downstream Dockerfiles,
+ the `r-base` image provides `littler` package [@littler] and associated
+ `install2.r` script, enabling users to install additional packages with
+ a command such as:
+
+    install2.r pkg1 pgk2 pkg3 ...
+
+- Dockerfile best practices 
+- automated builds, build triggers 
+ - version-stable builds
+
+
 ### Reproducibility
 
 
@@ -566,6 +568,9 @@ Rocker images benefit from widespread use, testing and contributions from many m
 - Table of main repos, links to Docker-Hub & GitHub addresses
 
 - list/table of topics on the wiki
+
+
+
 
 
 \bibliography{RJreferences}
