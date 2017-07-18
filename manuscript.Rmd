@@ -317,7 +317,7 @@ downstream Dockerfile developers to add additional persistent services
 or shutdown scripts that should be run when an instance starts up or
 shuts down.  The `rstudio` image uses such a start-up script to configure
 user settings such as login password and permissions through environmental
-variables at run time, see *Using Rocker Images* below.
+variables at run time.  <!-- link wiki howto page? -->
 
 The `tidyverse` image contains all required and suggested dependencies
 of the commonly used `tidyverse` and `devtools` R packages, including
@@ -363,9 +363,9 @@ image, users can set `R_VERSION`, `BUILD_DATE` (MRAN default snapshot).
 In the `rstudio` image users can set `RSTUDIO_VERSION` (otherwise defaults
 to the most recent version), and the `PANDOC_TEMPLATES_VERSION` .
 
-<!--
-This stack also makes use of Docker metadata labels: <http://schema-label.org> metadata for `license`, `vcs-url` (GitHub repository), and `vendor`.  These can be altered or extended in downstream images. 
--->
+This stack also makes use of Docker metadata labels defined by
+<http://schema-label.org>,
+indicating image `license` (GPL-2.0), `vcs-url` (GitHub repository), and `vendor` (Rocker Project).  These metadata can be altered or extended in downstream images. 
 
 
 <!--
@@ -387,28 +387,32 @@ The Dockerfiles in this repository are licensed under the GPL 2 or later.
 
 
 
-
+<!-- 
+Use cases: instruction, development, 
+-->
 
 
 
 
 ## Design principles & use cases
 
-- Portable: from laptop to cloud
-- Sandboxed: experiment without touching local system
-- Optimized: community-tweaked configurations
-- Interfaces: Console-based (R, bash, etc) or RStudio\textsuperscript{\textregistered} Server, Shiny\textsuperscript{\textregistered} server
-- Extensible: interactively and persistent community extensions
-- Versioned: 
+- **Portable**: from laptop to cloud
+- **Interfaces**: Console-based (R, bash, etc) or RStudio\textsuperscript{\textregistered} Server, Shiny\textsuperscript{\textregistered} server
+- **Sandboxed**: experiment without touching local system
+- **Optimized**: community-tweaked configurations
+- **Extensible**: interactively and persistent community extensions
+- **Versioned**: reproducible environments
 
-research use, instructional use
+
+
+
 
 ### Portability: From laptop to cloud
 
 One common use case for Rocker containers is to provide a fast and
 reliable mechanism to deploy a custom R envionment to a remote server, such
 as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean, NSF's
-Jetstream servers, or private or institutional server hardware.  Being
+Jetstream servers [@jetstream], or private or institutional server hardware.  Being
 able to test code in a predictable, pre-configured R environment on a
 local machine and then run the same code in an identical environment on a
 remote server (e.g. for access to greater RAM, more processors, or merely
@@ -416,81 +420,89 @@ to free up the local machine from a long-running computation) is essential
 for low-friction scaling of analysis.  Without such contanerization,
 getting code to run appropriately in a remote environment can be a major
 undertaking, requiring both time and knowledge many would-be users may
-not have.
+not have. 
 
-The following code installs Docker on almost any Linux-based server and
+<!-- comment on use in instructional context -->
+This portablility is similarly valuable in an instructional context. Requiring students
+to install all necessary software on personal laptops can be particularly challenging
+for short workshops, where download and installation time and troubleshooting across
+heterogeneous machines can prove time consuming and frustrating for students and instructors alike.
+By deploying a Rocker image or Rocker-derived image (see extensibility) on a cloud machine,
+an instructor can easily provide all students access to the pre-configured software environment
+using only the browser on their laptops.  Unlike a vendor-specific virtual machine image (e.g. Amazon Machine Images, AMIs),
+this approach does not preclude students being able to run the same software locally later on.
+After installing Docker for their machine they too can run the course-specific software environment
+easily on their own laptops and deploy it on other cloud providers.  This strategy has proven
+effective in our own experience in both workshops and semester-length courses. Similar Docker-based
+cloud deployments have been scaled to courses of 100s of students, e.g. at Duke [@Mine] and
+UC Berkeley [@data8].
+
+
+<!-- NOTE: Not sure if we should include such example commands, may be best left to the documentation? -->
+
+For instance, the following code installs Docker on almost any Linux-based server and
 launches a Rocker container providing the RStudio-server environment
-over a web interface.
+over a web interface. 
 
     wget -qO- https://get.docker.com/ | sh 
     sudo docker run -d -p 80:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
 
+Many academic and commerical cloud providers make it
+possible to execute such code snippets when an instance is launched, without
+ever needing to `ssh` into the machine.
 After running these two lines, the user may log into the server merely
 by pasting its IP address or DNS name into a browser and entering the
 appropriate password.  This provides the user with a familiar,
 interactive environment running on a remote machine while requiring
 a minimum of expertise.   
 
-The user can select a Rocker
-container which contains the required software pre-installed, such as
-`rocker/tidyverse`, which provides the popular `tidyverse` suite of R
-packages \citep{tidyverse}, or even use their own containers which can
-extend the Rocker containers, as discussed below.  This workflow saves
-considerable time relative to installing each package from scratch,
-which can take over an hour to reconstruct the environment provided by
-some rocker containers.  As many commericial cloud providers charge by
-the hour, a fast and simple mechanism to deploy the desired environment
-in the cloud is crucial to making this approach practical for more
-exploratory analyses.
-
-
-
-Unlike virtual machine images, multiple such Docker containers can
-be run on the same server in the same way (though unique TCP ports
-must be assigned to each if they are accessed through the RStudio web
-interface). More importantly, it is much easier to test software locally
-using the identical Docker container environment before deploying on
-a remote server than it is to run a virtual machine such as an Amazon
-Machine Image (AMI) locally, or to reproduce the runtime environment
-identically on local and server systems.
 
 ### Interfaces
 
+An important aspect of the Rocker project design is the ability
+for users to interact with the software on the container through either
+an interactive shell session (such as the R shell or a bash shell), or
+through a web browser accessing the RStudio\textsuperscript{\textregistered} Server
+integrated development environment (IDE).  Traditional remote and high-performance
+computing workflows for R users have usually required the use of `ssh` and 
+a terminal only interface, posing a challenge for interactive graphics 
+and a barrier to users unfamiliar with these tools and environments. Accessing
+an RStudio instance through the browser removes these barriers.  Rocker
+images include the RStudio-server software pre-installed and configured with
+the explicit permission of RStudio Inc. 
 
-Rocker images may be used for quickly deploying R code on remote servers
-without the use of the RStudio interface, running R in terminal mode
-over an `ssh` connection. As with any interactive docker instance, users
+Users of the `rstudio` instances can access a root `bash` shell in an 
+instance running the container using 
+
+```
+docker exec -ti <container-id> bash
+```
+
+which can be useful for administrative tasks such as installing system dependencies.
+All Rocker images can also be run as an interactive R, RScript or bash shell without running
+RStudio, which can be useful for batch jobs or for anyone who prefers that environment.
+
+<!--  Reserve these details for documentation, reference here? --> 
+As with any interactive docker instance, users
 should specify the interactive (`-i`) and terminal (`-t`, here combined
 with interactive as `-ti`) flags, and specify the desired executable
 environment (e.g. `R`, though other common options may be `Rscript` or
 `bash`):
 
-
     docker run --rm -ti rocker/tidyverse R
-
 
 This example shows the use of the `--rm` flag to indicate that the
 container should be removed when the interactive session is finished.
 
 
-
-
-
-While more detailed documentation on the use of Rocker images can be
-found on the Rocker wiki, we provide a conceptual overview here which
-illustrates common patterns and capabilities.
-
-**Interactive shell**:
-
-**RStudio instance**:
-
-**Linking local volumes**: Docker
+**Linking local volumes**
 
 Users of the Docker's GUI interface, Kitematic who use the
 `rstudio`-derived images will automatically have their local kitematic
 directory linked to the `/home/rstudio/kitematic` directory on the
 Docker container.
 
+<!-- Blah blah blah ... link to documentation instead(?) -->
 **Root vs user instances**: By default, all rocker containers run as
 root. This is consistent with standard Docker practice, allowing both
 interactive users and downstream Dockerfiles to install software directly
@@ -506,36 +518,61 @@ logs in through the RStudio server web interface as the non-root user
 permissions on the home directory.  For more details on user permissions,
 see the Rocker wiki.
 
+### Sandboxed
 
-### Convenience
-
-Installation of certain R packages can be challenging and non-intuitive,
-particularly when those packages require specific external
-dependencies. By running R through a Rocker image, users can deploy an
-R environment where their desired packages and libraries have already
-been installed and configured. As we discuss below, this configuration
-benefits from the input of a large community of users, helping to
-ensure better and more reliable performance. For instance, one example
-of such a configuration is in building and testing R packages using
-compiler sanatizers \citep{edd_sanitizers}, which requires R itself
-be re-compiled with specialized settings not avaialable or familiar
-to most R users.  Using the Rocker images `rocker/r-devel-san` and
-`rocker/r-devel-ubsan-clang` provides a fast and simple way for users
-to test
-
-Many users are reluctant to upgrade their suite of installed packages,
+Another feature of Rocker instances is the ability to provide a sandboxed 
+environment, isolated from software and potentially from other data on
+the machine.  Many users are reluctant to upgrade their suite of installed packages,
 which may break their existing code or even their R environment if the
 installation goes poorly.  However, upgrading packages and/or the R
 environment is often necessary to run analysis of a colleague or access
-more recent methods. Using Rocker, users can run the latest or specific
-earlier versions of R and R packages in an isolated environment without
-impacting their local system.
+more recent methods.  Rocker instances offer an easy solution. For 
+instance, a user can run R code requiring the most recent versions of R
+and related packages inside a Rocker container without having to upgrade their
+local installations first.  Conversely, one could use Rocker to run code
+on an older R release with prior versions of R packages, again without
+having to make any alteration to one's local R install.  Another common
+use case is to access an instance of R with support for particular
+options such as using gcc or clang compiler sanatizers \citep{edd_sanitizers}.
+These requires R itself be built with specialized settings that may not be
+not available or familiar to many R users on their native system, but can
+be easily deployed by pulling the Rocker images `rocker/r-devel-san` or
+`rocker/r-devel-ubsan-clang`.  
 
-### Extensible and Community-optimized images
+This sandboxing feature of Docker containers is also valuable in the 
+remote computing context, where it can allow system administrators to
+provide users with administrative (root) privilages to alter and install
+software within a container without altering the computational environment
+of other users on the remote machine.  Unlike traditional virtual machines,
+these containers do not impose a large footprint of reserved resources --
+a typical host can easily support 100s of containers [@docker-vs-vm].  
 
-Rocker images benefit from widespread use, testing and contributions from many members of the R community.  
+<!-- volume linking isolation -->
 
-## Extending Rocker images
+### Community Optimized
+
+Having a shared, transparent computational environment created by a publicly hosted, reproducible
+recipe facilitates community input into configuration details. R and many of its packages
+and related software can be configured with a wide range of options, compilers, different
+linear-algebra libraries and so forth.  While this flexibility reflects varying needs,
+many users rely on default settings which may be optimized more for simplicity of installation
+than performance.  The Rocker recipes reflect significant community input on these choices,
+as well as the considerable experience and expertise of the R Debian mantainer of 20 years
+in what configuration options to use.  This helps create a more finely tuned, optimized reference
+implementation of the R environment as well as a platform for comparing and discussing these 
+issues which are often overlooked elsewhere.  Issues and Pull Requests on the Rocker 
+repositories on GitHub attest to these discussions and improvements.
+Widespread use of the Rocker image helps promote both testing of these choices and 
+contributions further tweaking the configuration from many members of the R community.  
+
+
+### Versioned
+
+[@Boettiger2015]
+
+### Extensible 
+
+Rocker images are designed to provide 
 
 Often Rocker images are not deployed directly, but used as a base image
 onto which users add software for their own needs in a custom Dockerfile.
@@ -556,20 +593,12 @@ and promote best practices.
  - version-stable builds
 
 
-### Reproducibility
-
-
-\citep{Boettiger2015}
-
-### Instruction
-
-
-- Table of main repos, links to Docker-Hub & GitHub addresses
-
-- list/table of topics on the wiki
 
 
 
+
+
+## Conclusions
 
 
 \bibliography{RJreferences}
