@@ -619,11 +619,34 @@ contributions further tweaking the configuration from many members of the R comm
 
 <!-- Not intended as a guide to writing Dockerfiles, see http://ropenscilabs.github.io/r-docker-tutorial/05-dockerfiles.html -->
 
+Any portable computational environment faces an inevitable tension between
+the "kitchen sink problem" at one extreme, and the "discovery problem" on
+the other.  A kitchen sink image seeks to accomidate too many use cases
+in a single image.  Such images are inevitably very large and thus slow
+or difficult to deploy, maintain and optimize.  At the other extreme, providing
+too many specialized images makes it more difficult for a user to discover 
+the one they need.  The Rocker project seeks to avoid both of these problems
+by providing images that an be easily extended by individuals and communities.
+
 Users can easily add additional software to any running Rocker image using
 the standard R and Debian mechanisms. To make these changes persistent, Rocker 
-images can easily be extended by any user writing their own Dockerfiles based
-on an appropriate Rocker image.  
+images can be extended by any user writing their own Dockerfiles based
+on an appropriate Rocker image.  Many users maintain their own Dockerfiles
+which add software specific to their own needs on top of an existing Rocker image.
+This provides a convenient way to reap all the benefits listed above in a 
+customized environment.  
 
+Sharing these Dockerfiles can also facilitate the emergence 
+of extensions tuned to particular communities.  For instance, the `rocker/geospatial`
+image emerged from the input of a number of Rocker users all adding common
+geospatial libraries and packages on top of the existing Rocker images. 
+This coalescence helped create a more fine-tuned image with broad support 
+for a wide range of commonly used data formats and libraries.  Other community
+images are developed and maintained independently of the Rocker Project,
+such as the `popgen` image of population-genetics-oriented software developed 
+by the National Evolutionary Synthesis Center (NESCent).  
+
+<!-- see docs instead -->
 Rocker images provide a few utility functions to streamline this process, including the 
 `littler` [@littler] scripts which provide a concise syntax for installing packages in Dockerfiles, e.g.
 
@@ -635,12 +658,10 @@ a Dockerfile building `FROM rocker/verse:3.4.0` will only install R package vers
 available on CRAN on 2017-06-30, that is, the day R v3.4.1 was released.  (This default
 can of course be overwritten by specifying a different CRAN mirror explicitly.)
 
-
 Users writing their own Dockerfiles are encouraged to follow the same practices as the
-Rocker Project, such as the [Dockerfile Best Practices](), the use of automated builds,
+Rocker Project, such as the Dockerfile Best Practices [@best-practices], the use of automated builds,
 and when appropriate, versioned tags.  Users can ensure their automated builds are rebuilt
 every time the relevant upstream DOckerfile is updated by using build triggers on Docker Hub.
-
 
 Note that users can also preserve changes to Rocker images that they have modified interactively using
 the `docker commit` mechanism, which creates a new binary image which can be pushed back to
@@ -650,18 +671,11 @@ and reproducible mechanism to accomplish the same thing.
 
 
 
-
-- Dockerfiles. community input.  [`hlapp/rpopgen`](https://github.com/NESCent/popgen-docker)
-
-
-
-
-
-
-
-
-
 ## Conclusions
 
+
+Lessons for related efforts
+
+Future directions, Open Container Initiative, Singularity & Shifter (support for Docker on HPC)
 
 \bibliography{RJreferences}
