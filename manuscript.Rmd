@@ -396,13 +396,20 @@ Use cases: instruction, development,
 
 ## Design principles & use cases
 
+<!--  The main point here is that these are generic features that could be goals 
+      of any effort to provide researchers with virtual computing environments.
+      
+      While most virtual computing environments (AMI images, scientific cloud
+      platforms like cyverse, etc) provide some subset of these, they are most
+      effective in concert.  -->
+
 - **Portable**: from laptop to cloud
 - **Interfaces**: Console-based (R, bash, etc) or RStudio\textsuperscript{\textregistered} Server, Shiny\textsuperscript{\textregistered} server
 - **Sandboxed**: experiment without touching local system
+- **Transparent**: Dockerfiles & automated builds provide a transparent and verifiable record of precisely what is installed.
 - **Optimized**: community-tweaked configurations
 - **Extensible**: interactively and persistent community extensions
 - **Versioned**: reproducible environments
-
 
 
 
@@ -421,6 +428,10 @@ for low-friction scaling of analysis.  Without such contanerization,
 getting code to run appropriately in a remote environment can be a major
 undertaking, requiring both time and knowledge many would-be users may
 not have. 
+
+Perhaps more importantly, Rocker containers are just as easy to run
+on locally on most modern laptops on Windows, MacOS, and Linux-based
+operating systems.  
 
 <!-- comment on use in instructional context -->
 This portablility is similarly valuable in an instructional context. Requiring students
@@ -549,6 +560,22 @@ a typical host can easily support 100s of containers [@docker-vs-vm].
 
 <!-- volume linking isolation -->
 
+
+### Transparent
+
+Users can easily determine the software stack installed on any Rocker image
+by examining the associated Dockerfile recipe, which provides a consise, human-readable
+record of the installation.
+All Rocker images use automated builds through DockerHub, which also acts as the central,
+default repository distributing the images.  Using automated builds rather than uploading
+pre-built image binaries to the Docker Hub avoids the potential for the build
+not to match the recipe.  The corresponding Dockerfile is visible both on the Docker Hub
+and in the linked GitHub repository of the Rocker project (<https://github.com/rocker-org), 
+which provides a transparent versioned history of all changes made to these recipes,
+as well as documentation, a community wiki, and issues trackers for discussing proposed
+changes, bugs, improvements to the Dockerfiles and troubleshoot any issues users may encounter.
+
+
 ### Community Optimized
 
 Having a shared, transparent computational environment created by a publicly hosted, reproducible
@@ -568,29 +595,43 @@ contributions further tweaking the configuration from many members of the R comm
 
 ### Versioned
 
+
 [@Boettiger2015]
 
 ### Extensible 
 
-Rocker images are designed to provide 
+<!-- Not intended as a guide to writing Dockerfiles, see http://ropenscilabs.github.io/r-docker-tutorial/05-dockerfiles.html -->
 
-Often Rocker images are not deployed directly, but used as a base image
-onto which users add software for their own needs in a custom Dockerfile.
-We offer a few recommendations here to streamline writing these extensions
-and promote best practices.
+Users can easily add additional software to any running Rocker image using
+the standard R and Debian mechanisms. To make these changes persistent, Rocker 
+images can easily be extended by any user writing their own Dockerfiles based
+on an appropriate Rocker image.  
 
-- littler scripts
+Rocker images provide a few utility functions to streamline this process, including the 
+`littler` [@littler] scripts which provide a concise syntax for installing packages in Dockerfiles, e.g.
 
- To streamline the installation of R packages in downstream Dockerfiles,
- the `r-base` image provides `littler` package [@littler] and associated
- `install2.r` script, enabling users to install additional packages with
- a command such as:
+    RUN install2.r pkg1 pgk2 pkg3 ...
 
-    install2.r pkg1 pgk2 pkg3 ...
+Users building on the version-tagged images will by default use the MRAN snapshot mirror
+associated with the most recent date for which that image was current.  This ensures that
+a Dockerfile building `FROM rocker/verse:3.4.0` will only install R package versions that were
+available on CRAN on 2017-06-30, that is, the day R v3.4.1 was released.  (This default
+can of course be overwritten by specifying a different CRAN mirror explicitly.)
 
-- Dockerfile best practices 
-- automated builds, build triggers 
- - version-stable builds
+Users writing their own Dockerfiles are encouraged to follow the same practices as the
+Rocker Project, such as the [Dockerfile Best Practices](), the use of automated builds,
+and when appropriate, versioned tags.  Users can ensure their automated builds are rebuilt
+every time the relevant upstream DOckerfile is updated by using build triggers on Docker Hub.
+
+Note that users can also preserve changes to Rocker images that they have modified interactively using
+the `docker commit` mechanism, which creates a new binary image which can be pushed back to
+a personal account on the Docker Hub.  While this is sometimes convenient, we encourage users to
+consider writing Dockerfiles instead whenever possible, as this creates a more transparent
+and reproducible mechanism to accomplish the same thing.  
+
+- Dockerfiles. community input.  [`hlapp/rpopgen`](https://github.com/NESCent/popgen-docker)
+
+
 
 
 
