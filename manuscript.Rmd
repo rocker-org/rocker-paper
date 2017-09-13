@@ -108,7 +108,7 @@ from source.  Basing this stack on `debian:testing` means that much more
 recent versions of commonly-used libraries and compilers are available
 as binaries than would be found in a Debian stable release.  In order
 to provide access to the most recent avialble binaries, this stack uses
-apt-pinning \citep{apt-pinning} to allow the `apt` package manager to also
+apt-pinning \citep{apt_pinning} to allow the `apt` package manager to also
 install binaries from `debian:unstable`, which represents the most recent,
 bleeding edge of packages built for Debian when necessary.  For instance,
 the `r-base` image provided by Rocker installs the most recent version of
@@ -148,8 +148,8 @@ and these down-sides:
 
 1. These Dockerfiles require occassional minor maintenance to ensure successful builds. (e.g. changing an installation directive from `unstable` to `testing` or vice versa)
 2. The resulting images are inherently dynamic: rebuilding the same Dockerfile months or years apart will generate images with significantly different versions of software installed.
-3. The use of apt pinning may be unfamiliar to some users, where the user must ultimately be responsible to ensure compatibility \citep{apt-pinning}.
-4. `testing` and `unstable` do not recieve the attention to security updates from the Debian security team. [@debian-security]
+3. The use of apt pinning may be unfamiliar to some users, where the user must ultimately be responsible to ensure compatibility \citep{apt_pinning}.
+4. `testing` and `unstable` do not recieve the attention to security updates from the Debian security team \citep{debian_security}.
 <!-- DE: Are you sure about that point 4 ? -->
 <!-- CB: I dunno, just quoting from https://www.debian.org/releases/testing/ -->
 
@@ -178,7 +178,7 @@ the current release, `R`.  As the names suggest, each provide slightly
 different configurations.  Of particular interest are the images
 providing development R built with support for C/C++ address and
 undefined-behavior sanitizers, which are somewhat more difficult to
-configure \citep{nedd_sanitizers}.
+configure \citep{edd_sanitizers}.
 
 As these images focus on developers and/or as base images for custom uses,
 this stack does include many specific R packages. Additional dependencies
@@ -250,7 +250,7 @@ the last date for which that version of R was the latest release. These
 snapshots are provided by the MRAN archive created by Revolution
 Analytics (now part of Microsoft). It archives daily snapshots
 of all of CRAN from which a user can install packages with the usual
-`install.packages()` function  [@MRAN]. Users can always override this
+`install.packages()` function  \citep{MRAN}. Users can always override this
 default by passing any current CRAN repository explicitly.  Unlike CRAN,
 Bioconductor only updates its repositories through bi-annual releases
 aligned to R's spring release schedule. Thus, Bioconductor packages
@@ -259,7 +259,7 @@ selects the Bioconductor release corresponding to the version of R in use.
 
 **Version tags**:  The version tags are propegated throughout this
 stack: _e.g._, `rocker/tidyverse:devel` will provide the currently
-released versions of the R packages in the `tidyverse` [@tidyverse]
+released versions of the R packages in the `tidyverse` \citep{tidyverse}
 installed on the nightly build of R-devel.  Developers building packages
 on this stack are encouraged to tag their images accordingly as well.
 Table 3 indicates which versions of R are currently available in the
@@ -327,7 +327,7 @@ optimal for everyone, both the packages selected in this stack and the
 stack ordering reflect considerable community input and tuning.
 
 The `rstudio` image includes a lightweight, easy-to-use and
-docker-friendly `init` system, s6 [@s6] for running persistant services,
+docker-friendly `init` system, s6 \citep{s6} for running persistant services,
 including the RStudio server.  This system provides a convenient way for
 downstream Dockerfile developers to add additional persistent services
 (such as an `ssh` server) to a single container, or additional start-up
@@ -436,7 +436,7 @@ Use cases: instruction, development,
 One common use case for Rocker containers is to provide a fast and
 reliable mechanism to deploy a custom R envionment to a remote server, such
 as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean, NSF's
-Jetstream servers [@jetstream], or private or institutional server hardware.  Being
+Jetstream servers \citep{jetstream}, or private or institutional server hardware.  Being
 able to test code in a predictable, pre-configured R environment on a
 local machine and to then run the same code in an identical environment on a
 remote server (e.g. for access to greater RAM, more processors, or merely
@@ -462,8 +462,8 @@ this approach does not preclude students being able to run the same software loc
 After installing Docker for their machine they too can run the course-specific software environment
 easily on their own laptops and deploy it on other cloud providers.  This strategy has proven
 effective in our own experience in both workshops and semester-length courses. Similar Docker-based
-cloud deployments have been scaled to courses of 100s of students, e.g. at Duke [@Mine] and
-UC Berkeley [@data8].
+cloud deployments have been scaled to courses of 100s of students, e.g. at Duke \citep{Mine} and
+UC Berkeley \citep{data8}.
 
 
 <!-- NOTE: Not sure if we should include such example commands, may be best left to the documentation? -->
@@ -544,7 +544,7 @@ this is not necessary.  The docker container will run as root, but a user
 logs in through the RStudio server web interface as the non-root user
 "rstudio", and thus any changes made to linked volumes will not alter file
 permissions on the home directory.  For more details on user permissions,
-see the Rocker wiki. [@rockerwiki]
+see the Rocker website, <https://rocker-project.org>.
 
 ### Sandboxed
 
@@ -573,7 +573,7 @@ provide users with administrative (root) privilages to alter and install
 software within a container without altering the computational environment
 of other users on the remote machine.  Unlike traditional virtual machines,
 these containers do not impose a large footprint of reserved resources --
-a typical host can easily support 100s of containers [@docker-vs-vm].  
+a typical host can easily support 100s of containers \cite{what-docker}.  
 
 <!-- volume linking isolation? -->
 
@@ -613,7 +613,7 @@ contributions further tweaking the configuration from many members of the R comm
 ### Versioned
 
 
-[@Boettiger2015]
+\citep{@Boettiger2015}
 
 ### Extensible 
 
@@ -648,7 +648,7 @@ by the National Evolutionary Synthesis Center (NESCent).
 
 <!-- see docs instead -->
 Rocker images provide a few utility functions to streamline this process, including the 
-`littler` [@littler] scripts which provide a concise syntax for installing packages in Dockerfiles, e.g.
+`littler` \citep{littler} scripts which provide a concise syntax for installing packages in Dockerfiles, e.g.
 
     RUN install2.r pkg1 pgk2 pkg3 ...
 
@@ -659,9 +659,9 @@ available on CRAN on 2017-06-30, that is, the day R v3.4.1 was released.  (This 
 can of course be overwritten by specifying a different CRAN mirror explicitly.)
 
 Users writing their own Dockerfiles are encouraged to follow the same practices as the
-Rocker Project, such as the Dockerfile Best Practices [@best-practices], the use of automated builds,
+Rocker Project, such as the Dockerfile Best Practices \citep{best_practices}, the use of automated builds,
 and when appropriate, versioned tags.  Users can ensure their automated builds are rebuilt
-every time the relevant upstream DOckerfile is updated by using build triggers on Docker Hub.
+every time the relevant upstream Dockerfile is updated by using build triggers on Docker Hub.
 
 Note that users can also preserve changes to Rocker images that they have modified interactively using
 the `docker commit` mechanism, which creates a new binary image which can be pushed back to
