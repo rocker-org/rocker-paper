@@ -218,11 +218,6 @@ image            | description                               | size   | download
 
 Table: The `debian:testing` image stack
 
-<!-- CB: Should we mention r-apt separately? -->
-<!-- DE: Or maybe not at all. It is somewhat specialised. +1 -->
-
-<!-- CB: Do we describe version tags of r-base, which do provide older versions of R but are based on Dockerfiles which will no longer build since the requested R version is no longer in `unstable`?  -->
-<!-- DE: Not sure. -->
 
 ### The `debian:stable`-based stack 
 
@@ -291,9 +286,6 @@ packages, using `apt`, since this will install a second, older version
 of R from the Debian repositories and a dated version of the R package
 (since any `r-cran-pkgname` package in the Debian repositories will
 depend on `r-base` in `apt` as well).
-<!-- DE: Likely a non-issue as /usr/local is always search before /usr. -->
-<!-- Right, apparently RStudio manages to flub this and ignores PATH order when looking for R.
-     Anyway, much of this should probably be moved to documentation elsewhere -->
 
 
 **Build schedule**: All images are built automatically from
@@ -362,6 +354,7 @@ tag     | apt repos | MRAN date    | Build frequency  | images with tag
 --------|-----------|--------------|------------------|-------------------------------           
 devel   | `stretch` | current date | nigthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
 latest  | `stretch` | current date | nightly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
+3.4.1   | `stretch` | current date | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
 3.4.0   | `stretch` | current date | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
 3.3.3   | `jessie`  | 2017-04-21   | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial` 
 3.3.2   | `jessie`  | 2017-03-06   | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
@@ -418,7 +411,7 @@ Use cases: instruction, development,
       
       While most virtual computing environments (AMI images, scientific cloud
       platforms like cyverse, etc) provide some subset of these, they are most
-      effective in concert.  -->
+      effective in concert.  
 
 - **Portable**: from laptop to cloud
 - **Interfaces**: Console-based (R, bash, etc) or RStudio\textsuperscript{\textregistered} Server, Shiny\textsuperscript{\textregistered} server
@@ -428,7 +421,7 @@ Use cases: instruction, development,
 - **Extensible**: interactively and persistent community extensions
 - **Versioned**: reproducible environments
 
-
+-->
 
 
 ### Portability: From laptop to cloud
@@ -436,37 +429,26 @@ Use cases: instruction, development,
 One common use case for Rocker containers is to provide a fast and
 reliable mechanism to deploy a custom R envionment to a remote server, such
 as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean, NSF's
-Jetstream servers \citep{jetstream}, or private or institutional server hardware.  Being
+Jetstream servers \citep{jetstream}, or private or institutional server hardware. 
+Lawrence Berkeley National Labs (LBNL) has made `Singularity`: software which can import
+and run Docker containers without root privileges, as most cluster administrators require [@singularity].  
+Another LBNL project, *Shifter*, allows Docker containers to be deployed on leadership-scale
+high performance computing platforms [@shifter].
+
+
+Importantly, Rocker containers are just as easy to run on locally on most modern laptops
+by first installing the appropraite Docker distribution for Windows, MacOS, and Linux-based
+operating systems. By sharing volumes with the local host, users can still manipulate
+files with familiar, native tools while performing computation through a reproducible,
+containerized environment [@Boettiger2015]. Being
 able to test code in a predictable, pre-configured R environment on a
 local machine and to then run the same code in an identical environment on a
 remote server (e.g. for access to greater RAM, more processors, or merely
 to free up the local machine from a long-running computation) is essential
-for low-friction scaling of analysis.  Without such contanerization,
+for low-friction scaling of analysis.  Without such containerization,
 getting code to run appropriately in a remote environment can be a major
 undertaking, requiring both time and knowledge many would-be users may
 not have. 
-
-Perhaps more importantly, Rocker containers are just as easy to run
-on locally on most modern laptops on Windows, MacOS, and Linux-based
-operating systems.  
-
-<!-- comment on use in instructional context -->
-This portablility is similarly valuable in an instructional context. Requiring students
-to install all necessary software on personal laptops can be particularly challenging
-for short workshops, where download and installation time and troubleshooting across
-heterogeneous machines can prove time consuming and frustrating for students and instructors alike.
-By deploying a Rocker image or Rocker-derived image (see extensibility) on a cloud machine,
-an instructor can easily provide all students access to the pre-configured software environment
-using only the browser on their laptops.  Unlike a vendor-specific virtual machine image (e.g. Amazon Machine Images, AMIs),
-this approach does not preclude students being able to run the same software locally later on.
-After installing Docker for their machine they too can run the course-specific software environment
-easily on their own laptops and deploy it on other cloud providers.  This strategy has proven
-effective in our own experience in both workshops and semester-length courses. Similar Docker-based
-cloud deployments have been scaled to courses of 100s of students, e.g. at Duke \citep{Mine} and
-UC Berkeley \citep{data8}.
-
-
-<!-- NOTE: Not sure if we should include such example commands, may be best left to the documentation? -->
 
 For instance, the following code installs Docker on almost any Linux-based server and
 launches a Rocker container providing the RStudio-server environment
@@ -477,13 +459,23 @@ over a web interface.
 
 Many academic and commerical cloud providers make it
 possible to execute such code snippets when an instance is launched, without
-ever needing to `ssh` into the machine.
-After running these two lines, the user may log into the server merely
+ever needing to `ssh` into the machine. The user may log into the server merely
 by pasting its IP address or DNS name into a browser and entering the
 appropriate password.  This provides the user with a familiar,
 interactive environment running on a remote machine while requiring
 a minimum of expertise.   
 
+
+This portablility is also valuable in an instructional context. Requiring students
+to install all necessary software on personal laptops can be particularly challenging
+for short workshops, where download and installation time and troubleshooting across
+heterogeneous machines can prove time consuming and frustrating for students and instructors alike.
+By deploying a Rocker image or Rocker-derived image (see *Extensibility*) on a cloud machine,
+an instructor can easily provide all students access to the pre-configured software environment
+using only the browser on their laptops. This strategy has proven
+effective in our own experience in both workshops and semester-length courses. Similar Docker-based
+cloud deployments have been scaled to courses of 100s of students, e.g. at Duke \citep{Mine} and
+UC Berkeley \citep{data8}.
 
 ### Interfaces
 
@@ -522,29 +514,9 @@ environment (e.g. `R`, though other common options may be `Rscript` or
 This example shows the use of the `--rm` flag to indicate that the
 container should be removed when the interactive session is finished.
 
+Details on sharing volumes, managing user permissions, and more can be found
+on the Rocker website, <https://rocker-project.org>.
 
-**Linking local volumes**
-
-Users of the Docker's GUI interface, Kitematic who use the
-`rstudio`-derived images will automatically have their local kitematic
-directory linked to the `/home/rstudio/kitematic` directory on the
-Docker container.
-
-<!-- Blah blah blah ... link to documentation instead(?) -->
-**Root vs user instances**: By default, all rocker containers run as
-root. This is consistent with standard Docker practice, allowing both
-interactive users and downstream Dockerfiles to install software directly
-without having to switch to root.  The main snag of this approach comes if
-a user links a local volume and modifies files on that volume, which will
-result in the local file being owned by `root` and not the default user.
-To avoid this, specify the non-root user at runtime (username `docker`
-on the `r-base` stack, or `rstudio` on images deriving from rstudio)
-when running an interactive shell.  For users accessing R through RStudio,
-this is not necessary.  The docker container will run as root, but a user
-logs in through the RStudio server web interface as the non-root user
-"rstudio", and thus any changes made to linked volumes will not alter file
-permissions on the home directory.  For more details on user permissions,
-see the Rocker website, <https://rocker-project.org>.
 
 ### Sandboxed
 
@@ -574,9 +546,6 @@ software within a container without altering the computational environment
 of other users on the remote machine.  Unlike traditional virtual machines,
 these containers do not impose a large footprint of reserved resources --
 a typical host can easily support 100s of containers \cite{what-docker}.  
-
-<!-- volume linking isolation? -->
-
 
 ### Transparent
 
@@ -612,12 +581,36 @@ contributions further tweaking the configuration from many members of the R comm
 
 ### Versioned
 
+The versioned stack, (`r-ver`, `rstudio`, `tidyverse`, `verse`,
+and `geospatial`), provides images which are intended to build an identical
+software stack every time, regardless of the release of new libraries and packages.  This 
+can be important for users who need computational reproducibility more than having the latest
+release of any piece of software, since subsequent releases can alter the behavior of code,
+introducing errors or altering previous results.  Users should specify an R version tag in
+the Docker image name to request a version stable image, e.g. `rocker/verse:3.4.0`.  If no tag
+is explicitly requested, Docker will provide the image with the tag `:latest`, which will
+always have the latest available versions of the software (built nightly).  
 
-\citep{@Boettiger2015}
+Users building on the version-tagged images will by default use the MRAN snapshot mirror [@MRAN]
+associated with the most recent date for which that image was current.  This ensures that
+a Dockerfile building `FROM rocker/verse:3.4.0` will only install R package versions that were
+available on CRAN on 2017-06-30, that is, the day R v3.4.1 was released.  This default
+can of course be overwritten in the standard R manner, e.g. by specifying a different CRAN mirror explicitly in any 
+command to `install.packages()`, or by adjusting the default CRAN mirror in `options(repo=<CRAN-MIRROR>)`
+in an `.Rprofile`.  Note that the MRAN date associated with the current release (e.g. `3.4.1` at the time of
+writing) will continue to advance on the Docker-hub image until the next R release.  Software
+installed from `apt-get` in these images will come from the the stable Debian release (`stretch` or `jessie`)
+and thus not change versions (though it will recieve security patches).  Packages installed from BioConductor
+using `bioclite()` utlitity will also install the version appropriate to the version of R found on the system
+(the Bioconductor semi-annual release model avoids the need for an MRAN mirror). Users installing packages
+from GitHub or other sources can request a specific git release tag or hash for a more reproducibile build,
+or adopt a more comprehensive solution such as packrat [@packrat]; however, @packrat should not be necessary
+for just maintaining reproducibility with respect to CRAN and Bioconductor stacks installed on versioned images.
+A more general discussion of the use of Docker for computational reproducibility can be found in [@Boettiger2015]. 
+
 
 ### Extensible 
 
-<!-- Not intended as a guide to writing Dockerfiles, see http://ropenscilabs.github.io/r-docker-tutorial/05-dockerfiles.html -->
 
 Any portable computational environment faces an inevitable tension between
 the "kitchen sink problem" at one extreme, and the "discovery problem" on
@@ -626,15 +619,21 @@ in a single image.  Such images are inevitably very large and thus slow
 or difficult to deploy, maintain and optimize.  At the other extreme, providing
 too many specialized images makes it more difficult for a user to discover 
 the one they need.  The Rocker project seeks to avoid both of these problems
-by providing images that an be easily extended by individuals and communities.
+by providing a carefully curated suite of images that an be easily extended by
+individuals and communities.  
 
+To make extensiosn transparent and persistent, Rocker images can be extended by
+any user by writing their own Dockerfiles based on an appropriate Rocker image.  
+The Dockerfiles in the Rocker stack should themselves provide a simple of example
+of this.  A user begins by selecting an appropriate base image for their needs: 
+if the RStudio interace is desired, a user might start with `FROM rocker/rstudio`;
+an image for testing a particular C code in an R package might use `FROM rocker/r-devel-san`,
+an image for reproducing a data analysis will probably select a stable version tag
+in addition to an appropriate base library, e.g.: `FROM rocker/tidyverse:3.4.1`
 Users can easily add additional software to any running Rocker image using
-the standard R and Debian mechanisms. To make these changes persistent, Rocker 
-images can be extended by any user writing their own Dockerfiles based
-on an appropriate Rocker image.  Many users maintain their own Dockerfiles
-which add software specific to their own needs on top of an existing Rocker image.
-This provides a convenient way to reap all the benefits listed above in a 
-customized environment.  
+the standard R and Debian mechanisms. Details on how to extend Rocker images can
+be found at <https://rocker-project.org>. 
+
 
 Sharing these Dockerfiles can also facilitate the emergence 
 of extensions tuned to particular communities.  For instance, the `rocker/geospatial`
@@ -644,30 +643,7 @@ This coalescence helped create a more fine-tuned image with broad support
 for a wide range of commonly used data formats and libraries.  Other community
 images are developed and maintained independently of the Rocker Project,
 such as the `popgen` image of population-genetics-oriented software developed 
-by the National Evolutionary Synthesis Center (NESCent).  
-
-<!-- see docs instead -->
-Rocker images provide a few utility functions to streamline this process, including the 
-`littler` \citep{littler} scripts which provide a concise syntax for installing packages in Dockerfiles, e.g.
-
-    RUN install2.r pkg1 pgk2 pkg3 ...
-
-Users building on the version-tagged images will by default use the MRAN snapshot mirror
-associated with the most recent date for which that image was current.  This ensures that
-a Dockerfile building `FROM rocker/verse:3.4.0` will only install R package versions that were
-available on CRAN on 2017-06-30, that is, the day R v3.4.1 was released.  (This default
-can of course be overwritten by specifying a different CRAN mirror explicitly.)
-
-Users writing their own Dockerfiles are encouraged to follow the same practices as the
-Rocker Project, such as the Dockerfile Best Practices \citep{best_practices}, the use of automated builds,
-and when appropriate, versioned tags.  Users can ensure their automated builds are rebuilt
-every time the relevant upstream Dockerfile is updated by using build triggers on Docker Hub.
-
-Note that users can also preserve changes to Rocker images that they have modified interactively using
-the `docker commit` mechanism, which creates a new binary image which can be pushed back to
-a personal account on the Docker Hub.  While this is sometimes convenient, we encourage users to
-consider writing Dockerfiles instead whenever possible, as this creates a more transparent
-and reproducible mechanism to accomplish the same thing.  
+by the National Evolutionary Synthesis Center (NESCent).
 
 
 
