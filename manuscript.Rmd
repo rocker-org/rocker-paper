@@ -556,7 +556,7 @@ All Rocker images use automated builds through DockerHub, which also acts as the
 default repository distributing the images.  Using automated builds rather than uploading
 pre-built image binaries to the Docker Hub avoids the potential for the build
 not to match the recipe.  The corresponding Dockerfile is visible both on the Docker Hub
-and in the linked GitHub repository of the Rocker project (<https://github.com/rocker-org), 
+and in the linked GitHub repository of the Rocker project (https://github.com/rocker-org), 
 which provides a transparent versioned history of all changes made to these recipes,
 as well as documentation, a community wiki, and issues trackers for discussing proposed
 changes, bugs, improvements to the Dockerfiles and troubleshoot any issues users may encounter.
