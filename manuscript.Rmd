@@ -15,7 +15,7 @@ author:
 abstract: >
   We describe the Rocker project, which provides a widely-used suite of Docker images
   with customized R environments for particular tasks. We discuss how this suite is
-  organized and how these tools can increase portability, scaling, reproducibility,
+  organized, and how these tools can increase portability, scaling, reproducibility,
   and convenience of R users and developers.
 preamble: >
    \usepackage{longtable}
@@ -40,7 +40,7 @@ and evolution. Here we seek to document the project's objectives and uses.
 
 Docker is a popular open source tool to create, distribute, deploy,
 and run software applications using *containers*.  Containers provide a
-virtual environment requiring all operating-system components an application needs to run:
+virtual environment (see \citet{Clark2014} for an overview of common virtual environments) requiring all operating-system components an application needs to run:
 code, runtime, system tools, system runtime.  Docker containers are
 lightweight as they share the operating system kernel, starting instantly,
 using a layered filesystem which minimizes disk footprint and download time,
