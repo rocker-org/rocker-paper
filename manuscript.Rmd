@@ -1,5 +1,7 @@
 ---
-title: "An Introduction to Rocker: Docker Containers for R"
+title: | 
+       | An Introduction to Rocker: 
+       | Docker Containers for R
 author:
   - name: Carl Boettiger
     affiliation: UC Berkeley 
@@ -52,7 +54,7 @@ in an isolated environment \citep{what-docker}.
 
 ## Rocker organization and workflow
 
-The Rocker Project consists of a suite of images built automatically by
+The Rocker project consists of a suite of images built automatically by
 and hosted on the Docker Hub, <https://hub.docker.com/r/rocker>.  Source
 Dockerfiles, supporting scripts and documentation are hosted on GitHub
 under the organization `rocker-org`, <https://github.com/rocker-org>.
@@ -64,7 +66,7 @@ use-cases, and other knowledge about using the Rocker images.
 
 ### Images in the Rocker Project
 
-The Rocker Project aims to provide a small core of Docker images that
+The Rocker project aims to provide a small core of Docker images that
 serve as convenient 'base' images on which other users can build custom
 R environments by writing their own Dockerfiles, while also providing a
 'batteries included' approach of images that can be used out of the box.
@@ -89,7 +91,7 @@ The relatively long period between stable Debian releases
 releases can lag significantly behind current releases of popular
 software, including R.  More recent versions of packages can be found in
 the pre-release distribution, `debian:testing`, while the very latest
-binary builds can be found on `debian:unstable`.   The Rocker Project
+binary builds can be found on `debian:unstable`.   The Rocker project
 can be largely divided into two stacks which address different needs,
 defined by which Debian distribution they are based on.  The first stack
 is based on `debian:testing`, the second, more recently introduced stack
@@ -641,7 +643,7 @@ image emerged from the input of a number of Rocker users all adding common
 geospatial libraries and packages on top of the existing Rocker images. 
 This coalescence helped create a more fine-tuned image with broad support 
 for a wide range of commonly used data formats and libraries.  Other community
-images are developed and maintained independently of the Rocker Project,
+images are developed and maintained independently of the Rocker project,
 such as the `popgen` image of population-genetics-oriented software developed 
 by the National Evolutionary Synthesis Center (NESCent). Rocker images are also 
 being used as base Docker images in the NSF sponsored Whole Tale project for
