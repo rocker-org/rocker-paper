@@ -120,7 +120,7 @@ e.g. `apt-get install r-cran-xml`.  This can be particularly helpful
 for packages with external system dependencies (such as `libxml2-dev`
 in this example) which cannot be installed from the R console as they 
 are system dependencies rather than R packages installed from within R.
-We should note, however, that only about 500 of the currently almost
+We should note, however, that only about 500 of the over
 11000 CRAN packages are available as Debian packages. 
 
 As the names `testing` and `unstable` imply, this approach is not
@@ -151,9 +151,10 @@ and these down-sides:
 1. These Dockerfiles require occasional minor maintenance to ensure successful builds. (e.g. changing an installation directive from `unstable` to `testing` or vice versa)
 2. The resulting images are inherently dynamic: rebuilding the same Dockerfile months or years apart will generate images with significantly different versions of software installed.
 3. The use of apt pinning may be unfamiliar to some users, where the user must ultimately be responsible to ensure compatibility \citep{apt_pinning}.
-4. `testing` and `unstable` do not receive the attention to security updates from the Debian security team \citep{debian_security}.
+<!--4. `testing` and `unstable` do not receive the attention to security updates from the Debian security team \citep{debian_security}.-->
 <!-- DE: Are you sure about that point 4 ? -->
 <!-- CB: I dunno, just quoting from https://www.debian.org/releases/testing/ -->
+<!-- DE: Which says nothing about _unstable_ not getting security updates, which is implied here-->
 
 ### Images overview
 
