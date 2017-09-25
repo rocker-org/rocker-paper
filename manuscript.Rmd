@@ -44,7 +44,7 @@ Docker is a popular open source tool to create, distribute, deploy,
 and run software applications using *containers*.  Containers provide a
 virtual environment (see \citet{Clark2014} for an overview of common virtual environments) requiring all operating-system components an application needs to run:
 code, runtime, system tools, system runtime.  Docker containers are
-lightweight as they share the operating system kernel, starting instantly,
+lightweight as they share the operating system kernel, starting instantly
 using a layered filesystem which minimizes disk footprint and download time,
 and are built on open standards that run on all major platforms (Linux, Mac,
 Windows), and provide an added layer of security by running an application
@@ -95,7 +95,7 @@ binary builds can be found on `debian:unstable`.   The Rocker project
 can be largely divided into two stacks which address different needs,
 defined by which Debian distribution they are based on.  The first stack
 is based on `debian:testing`, the second, more recently introduced stack
-is based only on `debian` stable releases.  These stacks have different
+is based only on Debian stable releases.  These stacks have different
 aims and thus provide different images, as shown in Tables 1 & 2.
 
 
@@ -151,10 +151,6 @@ and these down-sides:
 1. These Dockerfiles require occasional minor maintenance to ensure successful builds. (e.g. changing an installation directive from `unstable` to `testing` or vice versa)
 2. The resulting images are inherently dynamic: rebuilding the same Dockerfile months or years apart will generate images with significantly different versions of software installed.
 3. The use of apt pinning may be unfamiliar to some users, where the user must ultimately be responsible to ensure compatibility \citep{apt_pinning}.
-<!--4. `testing` and `unstable` do not receive the attention to security updates from the Debian security team \citep{debian_security}.-->
-<!-- DE: Are you sure about that point 4 ? -->
-<!-- CB: I dunno, just quoting from https://www.debian.org/releases/testing/ -->
-<!-- DE: Which says nothing about _unstable_ not getting security updates, which is implied here-->
 
 ### Images overview
 
@@ -228,7 +224,7 @@ This stack emphasizes stability and reproducibility of the Docker build.
 This stack was introduced much more recently (November 2016) 
 in response to considerable user input and requests. The key
 feature of this stack is the ability to run older versions of R along
-with the contemporaneous versions of R packages.  A user specifies the
+with the then-contemporaneous versions of R packages.  A user specifies the
 version desired using an image tag, e.g.  `rocker/r-ver:3.3.1` will
 refer to an image with R version 3.3.1 installed.  Omitting the tag
 is equivalent to using the tag `latest`, which, as the name implies,
@@ -284,8 +280,9 @@ While most system dependencies required by common R packages can still
 be installed from the `apt` repositories, occasionally a more recent
 version must be compiled from source (e.g. the Gibbs Sampling library,
 JAGS, and the geospatial toolkit GDAL, must both be compiled from source
-on `debian:jessie` images).  In this stack, users should never install R
-packages, using `apt`, since this will install a second, older version
+on `debian:jessie` images).  In this stack, users should avoid installing R
+packages using `apt` without careful consideration, as this will install a second, 
+probably different version
 of R from the Debian repositories and a dated version of the R package
 (since any `r-cran-pkgname` package in the Debian repositories will
 depend on `r-base` in `apt` as well).
@@ -458,12 +455,13 @@ launches a Rocker container providing the RStudio-server environment
 over a web interface. 
 
     wget -qO- https://get.docker.com/ | sh 
-    sudo docker run -d -p 80:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
+    sudo docker run -d -p 8787:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
 
 Many academic and commercial cloud providers make it
 possible to execute such code snippets when an instance is launched, without
 ever needing to `ssh` into the machine. The user may log into the server merely
-by pasting its IP address or DNS name into a browser and entering the
+by pasting its IP address or DNS name (followed by the chosen port, RStudio's default `:8787` in the above example)
+into a browser and entering the
 appropriate password.  This provides the user with a familiar,
 interactive environment running on a remote machine while requiring
 a minimum of expertise.   
@@ -607,9 +605,12 @@ and thus not change versions (though it will receive security patches).  Package
 using `bioclite()` utility will also install the version appropriate to the version of R found on the system
 (the Bioconductor semi-annual release model avoids the need for an MRAN mirror). Users installing packages
 from GitHub or other sources can request a specific git release tag or hash for a more reproducible build,
-or adopt a more comprehensive solution such as `packrat` \citep{packrat}; however, `packrat` should not be necessary
+or adopt an alternative approach such as `packrat` \citep{packrat}. A more general discussion of the use and limitations of Docker for computational reproducibility can be found in \citep{Boettiger2015}. 
+<!--
+however, `packrat` should not be necessary
 for just maintaining reproducibility with respect to CRAN and Bioconductor stacks installed on versioned images.
-A more general discussion of the use of Docker for computational reproducibility can be found in \citep{Boettiger2015}. 
+-->
+
 
 
 ### Extensible 
@@ -648,7 +649,8 @@ images are developed and maintained independently of the Rocker project,
 such as the `popgen` image of population-genetics-oriented software developed 
 by the National Evolutionary Synthesis Center (NESCent). Rocker images are also 
 being used as base Docker images in the NSF sponsored Whole Tale project for
-reproducible computing \citep{wholetale}.  
+reproducible computing \citep{wholetale}, and are heavily used by the `rhub`
+project in automated package testing \citep{rhub}.
 
 
 
