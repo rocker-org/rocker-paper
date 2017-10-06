@@ -30,7 +30,7 @@ output: rticles::rjournal_article
      To get started, I've just tried to err on the side of comprehensive, particularly since our documentation in places is sparse
      or dated.  Feel free to flag any areas that should be moved in part or whole to documentation.  -->
 
-## Introduction
+# Introduction
 
 The Rocker project was launched in October 2014 as a collaboration
 between CB & DE to provide high-quality Docker images containing the
@@ -51,26 +51,22 @@ Windows), and provide an added layer of security by running an application
 in an isolated environment \citep{what-docker}.  Familiarity with a few key
 terms is helpful in understanding this paper. The term "container" refers to 
 an isolated software environment on a computer. R users can think of running
-a container as analgous to loading an R package; it makes a set of software
+a container as analogous to loading an R package; it makes a set of software
 functions available.  A Docker "image" is a binary archive of that software,
-analgous to an R binary package -- a given version need be downloaded only
-once and then can be "run" to create a container whenever it is needed.  
+analogous to an R binary package -- a given version need be downloaded only
+once and then can be "run" to create a container whenever it is needed.
 A "Dockerfile" is a recipe, the source-code, to create a Docker image.  Development
 and contributions to the Rocker project focuses on the construction, organization
 and maintenance of these Dockerfiles.  
 
 
-## Design principles & use cases
+# Design principles & use cases
 
 <!--  The main point here is that these are generic features that could be goals 
       of any effort to provide researchers with virtual computing environments.
-      
-      While most virtual computing environments (AMI images, scientific cloud
-      platforms like cyverse, etc) provide some subset of these, they are most
-      effective in concert.  
-
+    
 - **Portable**: from laptop to cloud
-- **Interfaces**: Console-based (R, bash, etc) or RStudio\textsuperscript{\textregistered} Server, Shiny\textsuperscript{\textregistered} server
+- **Interfaces**: Console-based (R, bash, etc) or RStudio
 - **Sandboxed**: experiment without touching local system
 - **Transparent**: Dockerfiles & automated builds provide a transparent and verifiable record of precisely what is installed.
 - **Optimized**: community-tweaked configurations
@@ -106,17 +102,18 @@ getting code to run appropriately in a remote environment can be a major
 undertaking, requiring both time and knowledge many would-be users may
 not have. 
 
-For instance, the following code installs Docker on almost any Linux-based server and
-launches a Rocker container providing the RStudio-server environment
-over a web interface. 
+For instance, the following bash commands install Docker on almost any 
+Linux-based server and then launch a Rocker container providing the 
+RStudio-server environment over a web interface. 
 
     wget -qO- https://get.docker.com/ | sh 
-    sudo docker run -d -p 8787:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
+    sudo docker run -p 8787:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
 
-Many academic and commercial cloud providers make it
+The `docker run` option `-p` sets the port on which RStudio will appear, 8787 is
+the RStudio default. Many academic and commercial cloud providers make it
 possible to execute such code snippets when a container is launched, without
 ever needing to `ssh` into the machine. The user may log into the server merely
-by pasting its IP address or DNS name (followed by the chosen port, RStudio's default `:8787` in the above example)
+by pasting its IP address or DNS name (followed by the chosen port, e.g. `:8787`)
 into a browser and entering the
 appropriate password.  This provides the user with a familiar,
 interactive environment running on a remote machine while requiring
@@ -222,7 +219,9 @@ and in the linked GitHub repository of the Rocker project (https://github.com/ro
 which provides a transparent versioned history of all changes made to these recipes,
 as well as documentation, a community wiki, and issue trackers for discussing proposed
 changes, bugs, improvements to the Dockerfiles and troubleshoot any issues users may encounter.
-
+Having these public source files built automatically by a trusted provider (Docker Hub),
+rather than built locally and uploaded only in binary form provides is also useful from a
+security perspective in avoiding malware. 
 
 ### Community Optimized
 
@@ -243,12 +242,14 @@ contributions further tweaking the configuration from many members of the R comm
 
 ### Versioned
 
-The versioned stack, (`r-ver`, `rstudio`, `tidyverse`, `verse`,
-and `geospatial`), provides images which are intended to build an identical
-software stack every time, regardless of the release of new libraries and packages.  This 
+Access to specific versions of software  
 can be important for users who need computational reproducibility more than having the latest
 release of any piece of software, since subsequent releases can alter the behavior of code,
-introducing errors or altering previous results.  Users should specify an R version tag in
+introduce errors or otherwise alter previous results.  
+The versioned stack, (`r-ver`, `rstudio`, `tidyverse`, `verse`,
+and `geospatial`), provides images which are intended to build an identical
+software stack every time, regardless of the release of new libraries and packages.  
+Users should specify an R version tag in
 the Docker image name to request a version stable image, e.g. `rocker/verse:3.4.0`.  If no tag
 is explicitly requested, Docker will provide the image with the tag `:latest`, which will
 always have the latest available versions of the software (built nightly).  
@@ -314,7 +315,7 @@ reproducible computing \citep{wholetale}, and are heavily used by the R-Hub
 project in automated package testing \citep{rhub}.
 
 
-## Rocker organization and workflow
+# Rocker organization and workflow
 
 The Rocker project consists of a suite of images built automatically by
 and hosted on the Docker Hub, <https://hub.docker.com/r/rocker>.  Source
@@ -333,7 +334,7 @@ serve as convenient 'base' images on which other users can build custom
 R environments by writing their own Dockerfiles, while also providing a
 'batteries included' approach of images that can be used out of the box.
 The challenges of balancing diverse needs driven by very different use
-cases (discussed in more detail below) against the overarching goals
+cases against the overarching goals
 of creating images that are still sufficiently light-weight, easy to use
 and easy to maintain is a difficult art.  The implementation in both
 individual Rocker images and image stacks can never perfect that balance
@@ -365,7 +366,7 @@ recent stable version.   The different Rocker stacks have different
 aims and thus provide different images, as shown in Tables 1 & 2.
 
 
-## The `debian:testing`-based images
+### The `debian:testing`-based images
 
 The `debian:testing` stack aims to makes the most efficient use of
 upstream builds -- the precompiled `.deb` binaries provided by the
@@ -432,7 +433,7 @@ Docker commands without an organization namespace, e.g. `docker run -t
 r-base` to access the official image.  All other images in the Rocker
 project are not individually reviewed and built by Docker Inc and must
 be referenced using the `rocker` namespace,
-e.g. `docker run -t rocker/r-devel`.
+e.g. `docker run -ti rocker/r-devel`.
 
 Several of the images in this stack are oriented towards the R
 development community. `r-devel`, `drd`, `r-devel-san` &
@@ -449,7 +450,7 @@ As these images focus on developers and/or as base images for custom uses,
 this stack does not include many specific R packages. Additional dependencies
 and packages can easily be installed from `apt`.  R packages not available
 in the `apt` repositories can be installed directly from CRAN using the
-`littler` scripts, see *Extending Rocker images* section below.
+`littler` scripts, as described in <https://rocker-project.org/use>.
 
 This stack also include the images `shiny` and `rstudio:testing` that
 provide Shiny server and RStudio\textsuperscript{\textregistered} server IDE from RStudio\textsuperscript{\textregistered} Inc, built on the
@@ -473,15 +474,27 @@ this stack is the `drd` image, which is rebuilt each week by a `cron` trigger.
 
 image            | description                               | size   | downloads 
 ---------------- | ----------------------------------------- | ------ | ------- 
-[r-base](https://hub.docker.com/r/_/r-base)        | official image with current version of R  | 254 MB | 510,000   
+[r-base](https://hub.docker.com/r/_/r-base)        | official image with current version of R  | 254 MB | 632,000   
 [r-devel](https://hub.docker.com/r/rocker/r-devel) |  R-devel added side-by-side r-base (using alias `RD`)    | 1 GB | 4,000
-[drd](https://hub.docker.com/r/rocker/drd) |  lightweight r-devel, built almost daily  | 571 MB | 4,000
+[drd](https://hub.docker.com/r/rocker/drd) |  lightweight r-devel, built weekly  | 571 MB | 4,000
 [r-devel-san](https://hub.docker.com/r/rocker/r-devel-san)  |  as r-devel, but built with compiler sanitizers | 1.1 GB  | 1,000  
 [r-devel-ubsan-clang](https://hub.docker.com/r/rocker/r-devel-ubsan-clang)            |  Sanitizers, clang c compiler (instead of gcc) | 1.1 GB | 525
 [rstudio:testing](https://hub.docker.com/r/rocker/r-devel-san)        |  rstudio on debian:testing | 1.1 GB | 1,000 
-[shiny](https://hub.docker.com/r/rocker/shiny)     |  shiny-server on r-base               | 409 MB | 63,000
+[shiny](https://hub.docker.com/r/rocker/shiny)     |  shiny-server on r-base               | 409 MB | 123,000
 
 Table: The `debian:testing` image stack
+
+
+image            | description                               | size   | downloads 
+---------------- | ----------------------------------------- | ------ | ------- 
+[r-ver](https://hub.docker.com/r/rocker/r-ver)          |  Version-stable base R & src build tools  | 219 MB | 2,000
+[rstudio](https://hub.docker.com/r/rocker/rstudio)      |  Adds rstudio                             | 334 MB | 285,000
+[tidyverse](https://hub.docker.com/r/rocker/tidyverse)  |  Adds tidyverse & devtools                | 656 MB | 14,000 (+46,000 as `hadleyverse`)
+[verse](https://hub.docker.com/r/rocker/verse)          |  Adds java, tex & publishing-related packages   | 947 MB | 4,000
+[geospatial](https://hub.docker.com/r/rocker/geospatial)|  Adds geospatial libraries   |  1.3 GB | 1,000
+
+Table: The `rocker-versioned` stack of images
+
 
 
 ### The `debian:stable`-based stack 
@@ -498,7 +511,7 @@ will always point to an image using the current R release.  Thus, users
 wanting to create downstream Dockerfiles which are based on the current
 release at time (but will continue to reconstruct the same environment in
 the future after newer R versions are released) should explicitly include
-the corresponding version tag, e.g. `rocker/r-ver:3.4.0` at the time
+the corresponding version tag, e.g. `rocker/r-ver:3.4.2` at the time
 of writing, and not the `latest` tag.  Users can also run the current
 development version of R using the tag `devel`, which is built nightly
 from R-devel sources from `subversion`.
@@ -531,14 +544,21 @@ build instructions to accommodate changing dependencies.  Dockerfiles for
 past versions (e.g. < `3.4.0` currently) are intended to remain static
 over the long term, while the tag for the current version, `latest`,
 and `devel` may be tweaked to accommodate new features or dependencies.
+Version tags also obey semantics, so that omitting the second or third
+position of the tag is identical to asking for the most recent version:
+i.e. `rocker/verse:3.3` is the same as `rocker/verse:3.3.3`, and 
+`rocker/verse:3` is (at the time of writing), `rocker/verse:3.4.2`.
+This is accomplished using post-build hooks in Docker Hub, see examples at
+<https://github.com/rocker-org/rocker-versioned/> for details.  
 
 **Installation**: In this stack, the desired version of R is always built
 directly from source rather than the `apt` repositories.  Compilers and
 dependencies are still installed from the stable `apt` repositories,
 and thus lag behind the more recent versions found in the `testing`
 stack. Version tags `3.3.3` and older are based on the Debian 8.0 release,
-code-named `jessie`, while `3.4.0`, `devel`, and `latest` are based on
-Debian 9.0, `stretch`, released 2017-06-17, and thus have access to much
+code-named `jessie`, while `3.4.0` - `3.4.2`, `devel`, and `latest` are based on
+Debian 9.0, `stretch`, (released 2017-06-17, while R was at `3.4.0`), 
+and thus have access to much
 newer versions of common system dependencies and compilers.  Dependencies
 needed to compile R that are not required at runtime are removed once R is
 installed, keeping the base images light-weight for faster download times.
@@ -604,24 +624,15 @@ environment and Java development libraries.  Previously the Rocker
 project provided the image `hadleyverse` which was since divided into
 `tidyverse` and `verse` through community input.
 
-image            | description                               | size   | downloads 
----------------- | ----------------------------------------- | ------ | ------- 
-[r-ver](https://hub.docker.com/r/rocker/r-ver)          |  Version-stable base R & src build tools  | 219 MB | 2,000
-[rstudio](https://hub.docker.com/r/rocker/rstudio)      |  Adds rstudio                             | 334 MB | 285,000
-[tidyverse](https://hub.docker.com/r/rocker/tidyverse)  |  Adds tidyverse & devtools                | 656 MB | 14,000 (+46,000 as `hadleyverse`)
-[verse](https://hub.docker.com/r/rocker/verse)          |  Adds java, tex & publishing-related packages   | 947 MB | 4,000
-[geospatial](https://hub.docker.com/r/rocker/geospatial)|  Adds geospatial libraries   |  1.3 GB | 1,000
-
-Table: The `rocker-versioned` stack of images
-
 
 
 tag     | apt repos | MRAN date    | Build frequency  | images with tag 
 --------|-----------|--------------|------------------|-------------------------------           
 devel   | `stretch` | current date | nightly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
 latest  | `stretch` | current date | nightly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
-3.4.1   | `stretch` | current date | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
-3.4.0   | `stretch` | current date | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
+3.4.2   | `stretch` | current date | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
+3.4.1   | `stretch` | 2017-09-28 | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
+3.4.0   | `stretch` | 2017-06-30 | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
 3.3.3   | `jessie`  | 2017-04-21   | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial` 
 3.3.2   | `jessie`  | 2017-03-06   | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
 3.3.1   | `jessie`  | 2016-10-31   | monthly          | `r-ver`, `rstudio`, `tidyverse`, `verse`, `geospatial`
@@ -646,7 +657,7 @@ indicating image `license` (GPL-2.0), `vcs-url` (GitHub repository), and `vendor
 
 <!--
 
-## Maintenance and Updates
+### Maintenance and Updates
 
 These images are actively maintained.  This means that while an effort is made to preserve the general function of these images over time, both these Dockerfiles and the resulting images are subject to some change over time.  In particular:
 
@@ -655,7 +666,7 @@ These images are actively maintained.  This means that while an effort is made t
 - The Dockerfiles themselves are subject to change, to improve performance, ease of use, readability, or other concerns raised in the issues.  These changes should also not alter the general behavior of R or R packages on the image.  These changes can be seen in the git history.  The [rocker-versioned](https://github.com/rocker-org/rocker-versioned) repo will use its own semantic version tagging to indicate changes to this repository, with snapshots from these tags archived on Zenodo.
 
 
-## License ##
+### License 
 
 The Dockerfiles in this repository are licensed under the GPL 2 or later.
 
@@ -663,22 +674,13 @@ The Dockerfiles in this repository are licensed under the GPL 2 or later.
 
 
 
-<!-- 
-Use cases: instruction, development, 
--->
 
-
-
-
-
-
-## Conclusions
+# Conclusions
 
 Over the past several years, Docker has seen immense adoption across industry and academia. 
 The Open Container initiative \citep{oci} now provides an open standard that has further
 extended this container approach to research environments through projects such as 
-Singularity \citep{singularity}, used on clusters without root access, and Shifter \citep{shifter}
-for use on leadership high performance computing facilities. Containerization promises
+Singularity \citep{singularity}, allowing users to deploy containerized environments such as Rocker on machines where they do not have root access, such as clusters or private servers. Containerization promises
 to solve numerous challenges such as portability and replicability in research computing,
 which often relies on complex and heterogeneous software stacks \citep{Boettiger2015}. Yet
 implementing such environments in containers is not a trivial task, and not all implementations
