@@ -520,7 +520,7 @@ image            | description                               | size   | download
 
 Table: The `rocker-versioned` stack of images
 
-[^1]: Includes 49,000 under eariler name, `hadleyverse`.
+[^1]: This figure includes 49,000 downloads under the earlier name `hadleyverse`.
 
 
 
