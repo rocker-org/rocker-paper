@@ -89,19 +89,83 @@ So should we maybe insert a really short para like this
 
    Deployment: Ready-to-run binaries
    
-   Docker permits convenient access to pre-configured and create
-   _binary_ images that "just work".  This allows R users to access a
-   wider-variety of ready-to-use environments than the R Project
-   itself provides.  For example, R users on Windows may run RStudio
-   Server or Shiny Server locally just by launching a single command
-   (once Docker itself is installed), access R-devel without affecting
-   their local system and more.   
+ 
 
 nd then start the para with 'Another' instead on one?  There is a
 little overlap with 'Sandboxed' below but I think it is worth it to
 start with "first things first" here
 
 -->
+
+Docker permits convenient access to pre-configured and create
+_binary_ images that "just work."  This allows R users to access a
+wider-variety of ready-to-use environments than the R Project
+itself provides.  For example, R users on Windows may run RStudio
+Server or Shiny Server locally just by launching a single command
+(once Docker itself is installed), access R-devel without affecting
+their local system and more.  Here, we detail the some of the principle
+use cases motivate these containerized versions of R environments
+and the design principles that help make them work. 
+
+### Portability: From laptop to cloud
+
+
+One common use case for Rocker containers is to provide a fast and
+reliable mechanism to deploy a custom R environment to a remote server, such
+as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean, NSF's
+Jetstream servers \citep{jetstream}, or private or institutional server hardware.
+Rocker containers are  also easy to run locally on most modern laptops
+by first installing the appropriate Docker command (or distribution) for Windows, MacOS, and Linux-based
+operating systems. By sharing volumes with the local host, users can still manipulate
+files with familiar, native tools while performing computation through a reproducible,
+containerized environment \citep{Boettiger2015}. Being
+able to test code in a predictable, pre-configured R environment on a
+local machine and to then run the same code in an identical environment on a
+remote server (e.g. for access to greater RAM, more processors, or merely
+to free up the local machine from a long-running computation) is essential
+for low-friction scaling of analysis.  Without such containerization,
+getting code to run appropriately in a remote environment can be a major
+undertaking, requiring both time and knowledge many would-be users may
+not have. 
+
+For instance, the following bash commands install Docker on almost any 
+Linux-based server and then launch a Rocker container providing the 
+RStudio-server environment over a web interface. 
+
+    wget -qO- https://get.docker.com/ | sh 
+    sudo docker run -p 8787:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
+
+The `docker run` option `-p` sets the port on which RStudio will appear, 8787 is
+the RStudio default (adding your user to the docker group to avoids the
+nedd for a `sudo` command to call `docker`: `sudo usermod -g docker $USER`). 
+Many academic and commercial cloud providers make it
+possible to execute such code snippets when a container is launched, without
+ever needing to `ssh` into the machine. The user may log into the server merely
+by pasting its IP address or DNS name (followed by the chosen port, e.g. `:8787`)
+into a browser and entering the appropriate password.  
+This provides the user with a familiar,
+interactive environment running on a remote machine while requiring
+a minimum of expertise.   
+
+Deploying Docker containers on centrally administrated multi-user machines, such
+as department or university clusters, has previously been more difficult, since
+system adminstrators do not want to allow the elevated user permissions the Docker
+runtime enviornment requires.  To work around this problem, Lawrence Berkeley National
+Labs (LBNL) has made `Singularity`: a container runtime environment that users can
+both install and use to run most Docker containers without requiring root privileges\citep{singularity},
+making it easier to deploy Rocker containers in this context as well. 
+
+This portability is also valuable in an instructional context. Requiring students
+to install all necessary software on personal laptops can be particularly challenging
+for short workshops, where download and installation time and troubleshooting across
+heterogeneous machines can prove time consuming and frustrating for students and instructors alike.
+By deploying a Rocker image or Rocker-derived image (see *Extensibility*) on a cloud machine,
+an instructor can easily provide all students access to the pre-configured software environment
+using only the browser on their laptops. This strategy has proven
+effective in our own experience in both workshops and semester-length courses. Similar Docker-based
+cloud deployments have been scaled to courses of 100s of students, e.g. at Duke \citep{Mine} and
+UC Berkeley \citep{data8}.
+
 
 
 
@@ -181,66 +245,6 @@ be deployed from a machine without root privileges through the alternate contain
 runtime environment, Singularity \citep{singularity}.  Unlike traditional virtual machines,
 these containers do not impose a large footprint of reserved resources --
 a typical host can easily support 100s of containers \citep{what-docker}.  
-
-
-### Portability: From laptop to cloud
-
-
-One common use case for Rocker containers is to provide a fast and
-reliable mechanism to deploy a custom R environment to a remote server, such
-as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean, NSF's
-Jetstream servers \citep{jetstream}, or private or institutional server hardware.
-Rocker containers are  also easy to run locally on most modern laptops
-by first installing the appropriate Docker command (or distribution) for Windows, MacOS, and Linux-based
-operating systems. By sharing volumes with the local host, users can still manipulate
-files with familiar, native tools while performing computation through a reproducible,
-containerized environment \citep{Boettiger2015}. Being
-able to test code in a predictable, pre-configured R environment on a
-local machine and to then run the same code in an identical environment on a
-remote server (e.g. for access to greater RAM, more processors, or merely
-to free up the local machine from a long-running computation) is essential
-for low-friction scaling of analysis.  Without such containerization,
-getting code to run appropriately in a remote environment can be a major
-undertaking, requiring both time and knowledge many would-be users may
-not have. 
-
-For instance, the following bash commands install Docker on almost any 
-Linux-based server and then launch a Rocker container providing the 
-RStudio-server environment over a web interface. 
-
-    wget -qO- https://get.docker.com/ | sh 
-    sudo docker run -p 8787:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
-
-The `docker run` option `-p` sets the port on which RStudio will appear, 8787 is
-the RStudio default. Many academic and commercial cloud providers make it
-possible to execute such code snippets when a container is launched, without
-ever needing to `ssh` into the machine. The user may log into the server merely
-by pasting its IP address or DNS name (followed by the chosen port, e.g. `:8787`)
-into a browser and entering the
-appropriate password.  This provides the user with a familiar,
-interactive environment running on a remote machine while requiring
-a minimum of expertise.   
-
-Deploying Docker containers on centrally administrated multi-user machines, such
-as department or university clusters, has previously been more difficult, since
-system adminstrators do not want to allow the elevated user permissions the Docker
-runtime enviornment requires.  To work around this problem, Lawrence Berkeley National
-Labs (LBNL) has made `Singularity`: a container runtime environment that users can
-both install and use to run most Docker containers without requiring root privileges\citep{singularity},
-making it easier to deploy Rocker containers in this context as well. 
-
-This portability is also valuable in an instructional context. Requiring students
-to install all necessary software on personal laptops can be particularly challenging
-for short workshops, where download and installation time and troubleshooting across
-heterogeneous machines can prove time consuming and frustrating for students and instructors alike.
-By deploying a Rocker image or Rocker-derived image (see *Extensibility*) on a cloud machine,
-an instructor can easily provide all students access to the pre-configured software environment
-using only the browser on their laptops. This strategy has proven
-effective in our own experience in both workshops and semester-length courses. Similar Docker-based
-cloud deployments have been scaled to courses of 100s of students, e.g. at Duke \citep{Mine} and
-UC Berkeley \citep{data8}.
-
-
 
 
 ### Transparent
