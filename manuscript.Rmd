@@ -57,40 +57,6 @@ and maintenance of these Dockerfiles.
 
 # Design principles & use cases
 
-<!--  The main point here is that these are generic features that could be goals 
-      of any effort to provide researchers with virtual computing environments.
-    
-- **Portable**: from laptop to cloud
-- **Interfaces**: Console-based (R, bash, etc) or RStudio
-- **Sandboxed**: experiment without touching local system
-- **Transparent**: Dockerfiles & automated builds provide a transparent and verifiable record of precisely what is installed.
-- **Optimized**: community-tweaked configurations
-- **Extensible**: interactively and persistent community extensions
-- **Versioned**: reproducible environments
-
--->
-
-
-<!-- DE: It is a little weird to have this first as it is a somewhat
-advanced, and I'd conjecture "proportionally speaking, "rare" use.
-Isn't the main use to just "deploy an application" _locally_? I how we
-hand users R, or R-devel, or RStudio, or Tibbliesverse ?
-
-By the same token, it is a bit weird to intro Singularity _here_ and I
-still don't know if Shifter really needs to be in the paper (cf
-Patrick's comments)
-
-So should we maybe insert a really short para like this
-
-   Deployment: Ready-to-run binaries
-   
- 
-
-nd then start the para with 'Another' instead on one?  There is a
-little overlap with 'Sandboxed' below but I think it is worth it to
-start with "first things first" here
-
--->
 
 Docker permits convenient access to pre-configured and create
 _binary_ images that "just work."  This allows R users to access a
