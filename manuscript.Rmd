@@ -168,7 +168,6 @@ environment (e.g. `R`, though other common options may be `Rscript` or
 
 This example shows the use of the `--rm` flag to indicate that the
 container should be removed when the interactive session is finished.
-
 Details on sharing volumes, managing user permissions, and more can be found
 on the Rocker website, <https://rocker-project.org>.
 
