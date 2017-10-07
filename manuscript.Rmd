@@ -25,11 +25,6 @@ output: rticles::rjournal_article
 ---
 
 
-<!-- Notes to Dirk: 
-     Some of this material may be more appropriate for documentation elsewhere, appearing here in only abbreviated form.  
-     To get started, I've just tried to err on the side of comprehensive, particularly since our documentation in places is sparse
-     or dated.  Feel free to flag any areas that should be moved in part or whole to documentation.  -->
-
 # Introduction
 
 The Rocker project was launched in October 2014 as a collaboration
@@ -235,8 +230,6 @@ remote computing context, allowing system administrators to grant
 users freedom to install software which requires root privileges inside a container,
 while not granting them root access on the host machine. Root access
 is required to launch Docker containers, though not to access containers already
-<!-- DE False. On Linux the dockerd has the correct rights, and I (as member of group Docker) 
-can access docker without it.  That is important: minimal sudo use!  -->
 running and providing some service such as RStudio. Users logging into a container
 through the RStudio\textsuperscript{\textregistered} interface do not by default have root privileges, though are able
 to install R packages. Granting these users root privileges in the container still leaves
@@ -310,10 +303,6 @@ using `bioclite()` utility will also install the version appropriate to the vers
 (the Bioconductor semi-annual release model avoids the need for an MRAN mirror). Users installing packages
 from GitHub or other sources can request a specific git release tag or hash for a more reproducible build,
 or adopt an alternative approach such as `packrat` \citep{packrat}. A more general discussion of the use and limitations of Docker for computational reproducibility can be found in \cite{Boettiger2015}. 
-<!--
-however, `packrat` should not be necessary
-for just maintaining reproducibility with respect to CRAN and Bioconductor stacks installed on versioned images.
--->
 
 
 
@@ -450,8 +439,6 @@ stable yet current.
 Relative to `stable`, the `testing` stack thus offers the following advantages: 
 
 1. These Dockerfiles are easy to develop and extend because almost all software can be installed through the package manager
-<!-- DE 1.) would be true of stable too, no?   -->
-<!-- CB  those sources are sometimes too old; e.g. jags sources on jessie are incompatible with rjags, etc -->
 2. These Dockerfiles always install the most recent available software
 3. These Dockerfiles can almost always build relatively quickly
 
@@ -537,7 +524,7 @@ image            | description                               | size   | download
 
 Table: The `rocker-versioned` stack of images
 
-[^1]: Includes 49,000 under eariler name, `hadleyverse`.
+[^1]: This figure includes 49,000 downloads under the earlier name `hadleyverse`.
 
 
 
