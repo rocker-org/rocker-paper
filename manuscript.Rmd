@@ -58,15 +58,18 @@ and maintenance of these Dockerfiles.
 # Design principles & use cases
 
 
-Docker permits convenient access to pre-configured and create
-_binary_ images that "just work."  This allows R users to access a
-wider-variety of ready-to-use environments than the R Project
-itself provides.  For example, R users on Windows may run RStudio
-Server or Shiny Server locally just by launching a single command
-(once Docker itself is installed), access R-devel without affecting
-their local system and more.  Here, we detail the some of the principle
-use cases motivate these containerized versions of R environments
-and the design principles that help make them work. 
+Docker gives users very convenient access to pre-configured and
+pre-built _binary_ images that "just work".  This allows R users to
+access a wider-variety of ready-to-use environments than provided by
+either the R Project itself or, say, their distribution which will
+generally focus on one (current) release.  For example, R users on
+Windows may run RStudio Server or Shiny Server locally just by launching
+a single command (once Docker itself is installed). Another common
+use-case is access to R-devel without affecting the local system and
+more. Here, we detail the some of the principle use cases motivate these
+containerized versions of R environments and the design principles that
+help make them work.
+
 
 ### Portability: From laptop to cloud
 
