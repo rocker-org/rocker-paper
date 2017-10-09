@@ -48,8 +48,8 @@ terms is helpful in understanding this paper. The term "container" refers to
 an isolated software environment on a computer. R users can think of running
 a container as analogous to loading an R package; it makes a set of software
 functions available.  A Docker "image" is a binary archive of that software,
-analogous to an R binary package -- a given version need be downloaded only
-once and then can be "run" to create a container whenever it is needed.
+analogous to an R binary package: a given version is downloaded only
+once, and can then be "run" to create a container whenever it is needed.
 A "Dockerfile" is a recipe, the source-code, to create a Docker image.  Development
 and contributions to the Rocker project focuses on the construction, organization
 and maintenance of these Dockerfiles.  
@@ -65,9 +65,9 @@ either the R Project itself or, say, their distribution which will
 generally focus on one (current) release.  For example, R users on
 Windows may run RStudio Server or Shiny Server locally just by launching
 a single command (once Docker itself is installed). Another common
-use-case is access to R-devel without affecting the local system and
-more. Here, we detail the some of the principle use cases motivate these
-containerized versions of R environments and the design principles that
+use-case is access to R-devel without affecting the local system.
+Here, we detail some of the principle use cases motivating these
+containerized versions of R environments, and the design principles that
 help make them work.
 
 
@@ -85,7 +85,7 @@ files with familiar, native tools while performing computation through a reprodu
 containerized environment \citep{Boettiger2015}. Being
 able to test code in a predictable, pre-configured R environment on a
 local machine and to then run the same code in an identical environment on a
-remote server (e.g. for access to greater RAM, more processors, or merely
+remote server (_e.g._, for access to greater RAM, more processors, or merely
 to free up the local machine from a long-running computation) is essential
 for low-friction scaling of analysis.  Without such containerization,
 getting code to run appropriately in a remote environment can be a major
@@ -101,22 +101,21 @@ RStudio-server environment over a web interface.
 
 The `docker run` option `-p` sets the port on which RStudio will appear, 8787 is
 the RStudio default (adding your user to the docker group to avoids the
-nedd for a `sudo` command to call `docker`: `sudo usermod -g docker $USER`). 
+need for a `sudo` command to call `docker`: `sudo usermod -g docker $USER`). 
 Many academic and commercial cloud providers make it
 possible to execute such code snippets when a container is launched, without
 ever needing to `ssh` into the machine. The user may log into the server merely
-by pasting its IP address or DNS name (followed by the chosen port, e.g. `:8787`)
-into a browser and entering the appropriate password.  
-This provides the user with a familiar,
+by pasting its IP address or DNS name (followed by the chosen port, _e.g._, `:8787`)
+into a browser and entering the appropriate password. This provides the user with a familiar,
 interactive environment running on a remote machine while requiring
 a minimum of expertise.   
 
 Deploying Docker containers on centrally administrated multi-user machines, such
 as department or university clusters, has previously been more difficult, since
 system adminstrators do not want to allow the elevated user permissions the Docker
-runtime enviornment requires.  To work around this problem, Lawrence Berkeley National
-Labs (LBNL) has made `Singularity`: a container runtime environment that users can
-both install and use to run most Docker containers without requiring root privileges\citep{singularity},
+runtime environment requires.  To work around this problem, Lawrence Berkeley National
+Labs (LBNL) has made 'Singularity' \citep{singularity}: a container runtime environment that users can
+both install and use to run most Docker containers without requiring root privileges,
 making it easier to deploy Rocker containers in this context as well. 
 
 This portability is also valuable in an instructional context. Requiring students
@@ -127,7 +126,7 @@ By deploying a Rocker image or Rocker-derived image (see *Extensibility*) on a c
 an instructor can easily provide all students access to the pre-configured software environment
 using only the browser on their laptops. This strategy has proven
 effective in our own experience in both workshops and semester-length courses. Similar Docker-based
-cloud deployments have been scaled to courses of 100s of students, e.g. at Duke \citep{Mine} and
+cloud deployments have been scaled to courses of 100s of students, _e.g._, at Duke \citep{Mine} and
 UC Berkeley \citep{data8}.
 
 
@@ -141,7 +140,7 @@ an interactive shell session (such as the R shell or a bash shell), or
 through a web browser accessing the RStudio\textsuperscript{\textregistered} Server
 integrated development environment (IDE).  Traditional remote and high-performance
 computing workflows for R users have usually required the use of `ssh` and 
-a terminal only interface, posing a challenge for interactive graphics 
+a terminal-only interface, posing a challenge for interactive graphics 
 and a barrier to users unfamiliar with these tools and environments. Accessing
 an RStudio\textsuperscript{\textregistered} container through the browser removes these barriers.  Rocker
 images include the RStudio-server software pre-installed and configured with
@@ -157,11 +156,10 @@ which can be useful for administrative tasks such as installing system dependenc
 All Rocker images can also be run as an interactive R, RScript or bash shell without running
 RStudio, which can be useful for batch jobs or for anyone who prefers that environment.
 
-<!--  Reserve these details for documentation, reference here? --> 
 As with any interactive Docker container, users
 should specify the interactive (`-i`) and terminal (`-t`, here combined
 with interactive as `-ti`) flags, and specify the desired executable
-environment (e.g. `R`, though other common options may be `Rscript` or
+environment (_e.g._, `R`, though other common options may be `Rscript` or
 `bash`):
 
     docker run --rm -ti rocker/tidyverse R
@@ -179,7 +177,7 @@ environment, isolated from software and potentially from other data on
 the machine.  Many users are reluctant to upgrade their suite of installed packages,
 which may break their existing code or even their R environment if the
 installation goes poorly.  However, upgrading packages and/or the R
-environment is often necessary to run analysis of a colleague or access
+environment is often necessary to run analysis of a colleague, or access
 more recent methods.  Rocker offers an easy solution. For 
 instance, a user can run R code requiring the most recent versions of R
 and related packages inside a Rocker container without having to upgrade their
@@ -204,7 +202,7 @@ to install R packages. Granting these users root privileges in the container sti
 them sandboxed from the host container.  Further, Docker images can
 be deployed from a machine without root privileges through the alternate container
 runtime environment, Singularity \citep{singularity}.  Unlike traditional virtual machines,
-these containers do not impose a large footprint of reserved resources --
+these containers do not impose a large footprint of reserved resources as
 a typical host can easily support 100s of containers \citep{what-docker}.  
 
 
@@ -248,26 +246,26 @@ Access to specific versions of software can be important for users who
 need computational reproducibility more than having the latest release
 of any piece of software, since subsequent releases can alter the
 behavior of code, introduce errors or otherwise alter previous
-results.  The versioned stack, (`r-ver`, `rstudio`, `tidyverse`,
-`verse`, and `geospatial`), provides images which are intended to
+results.  The versioned stack (`r-ver`, `rstudio`, `tidyverse`,
+`verse`, and `geospatial`) provides images which are intended to
 build an identical software stack every time, regardless of the
 release of new libraries and packages.  Users should specify an R
 version tag in the Docker image name to request a version stable
-image, e.g. `rocker/verse:3.4.0`.  If no tag is explicitly requested,
+image, _e.g._, `rocker/verse:3.4.0`.  If no tag is explicitly requested,
 Docker will provide the image with the tag `:latest`, which will
 always have the latest available versions of the software (built nightly).  
 
 Users building on the version-tagged images will by default use the MRAN snapshot mirror \citep{MRAN}
 associated with the most recent date for which that image was current.  This ensures that
-a Dockerfile building `FROM rocker/verse:3.4.0` will only install R package versions that were
-available on CRAN on 2017-06-30, that is, the day R v3.4.1 was released.  This default
-can of course be overwritten in the standard R manner, e.g. by specifying a different CRAN mirror explicitly in any 
+a Dockerfile building `FROM rocker/verse:3.4.1` will only install R package versions that were
+available on CRAN on 2017-06-30, that is, the day R 3.4.1 was released.  This default
+can of course be overwritten in the standard R manner, _e.g._, by specifying a different CRAN mirror explicitly in any 
 command to `install.packages()`, or by adjusting the default CRAN mirror in `options(repo=<CRAN-MIRROR>)`
-in an `.Rprofile`.  Note that the MRAN date associated with the current release (e.g. `3.4.1` at the time of
+in an `.Rprofile`.  Note that the MRAN date associated with the current release (_e.g._, `3.4.2` at the time of
 writing) will continue to advance on the Docker-hub image until the next R release.  Software
 installed from `apt-get` in these images will come from the the stable Debian release (`stretch` or `jessie`)
 and thus not change versions (though it will receive security patches).  Packages installed from BioConductor
-using `bioclite()` utility will also install the version appropriate to the version of R found on the system
+using the `bioclite()` utility will also install the version appropriate to the version of R found on the system
 (the Bioconductor semi-annual release model avoids the need for an MRAN mirror). Users installing packages
 from GitHub or other sources can request a specific git release tag or hash for a more reproducible build,
 or adopt an alternative approach such as `packrat` \citep{packrat}. A more general discussion of the use and limitations of Docker for computational reproducibility can be found in \cite{Boettiger2015}. 
@@ -294,7 +292,7 @@ of this.  A user begins by selecting an appropriate base image for their needs:
 if the RStudio\textsuperscript{\textregistered} interface is desired, a user might start with `FROM rocker/rstudio`;
 an image for testing a particular C code in an R package might use `FROM rocker/r-devel-san`,
 an image for reproducing a data analysis will probably select a stable version tag
-in addition to an appropriate base library, e.g.: `FROM rocker/tidyverse:3.4.1`
+in addition to an appropriate base library, _e.g._,: `FROM rocker/tidyverse:3.4.1`
 Users can easily add additional software to any running Rocker image using
 the standard R and Debian mechanisms. Details on how to extend Rocker images can
 be found at <https://rocker-project.org>. 
@@ -305,7 +303,7 @@ of extensions tuned to particular communities.  For instance, the `rocker/geospa
 image emerged from the input of a number of Rocker users all adding common
 geospatial libraries and packages on top of the existing Rocker images. 
 This coalescence helped create a more fine-tuned image with broad support 
-for a wide range of commonly used data formats and libraries.  Other community
+for a wide range of commonly-used data formats and libraries.  Other community
 images are developed and maintained independently of the Rocker project,
 such as the `popgen` image of population-genetics-oriented software developed 
 by the National Evolutionary Synthesis Center (NESCent). Rocker images are also 
@@ -338,7 +336,7 @@ of creating images that are still sufficiently light-weight, easy to use
 and easy to maintain is a difficult art.  The implementation in both
 individual Rocker images and image stacks can never perfect that balance
 for everyone, but today reflects the considerable community input and
-testing over past few years.
+testing over the past few years.
 
 
 All Rocker images are based on the Debian Linux distribution.
@@ -346,18 +344,18 @@ The Debian platform provides a small base image, the well-known `apt`
 package management system and rich ecosystem of software libraries,
 making it the base image of choice for Docker images, including many
 of the "official" images maintained by Docker's own development team.
-The Debian platform is also perhaps the best supported Linux platform
+The Debian platform is also perhaps the best-supported Linux platform
 within the R community, including an active `r-sig-debian` listserve.
 The relatively long period between stable Debian releases
 (roughly two years recently) means that software in the Debian stable 
-(e.g. `debian:jessie`, `debian:stretch`)
+(_e.g._, `debian:jessie`, `debian:stretch`)
 releases can lag significantly behind current releases of popular
 software, including R.  More recent versions of packages can be found in
 the pre-release distribution, `debian:testing`, while the very latest
 binary builds can be found on `debian:unstable`.   The Rocker project
 can be largely divided into two stacks which address different needs,
 reflected in which Debian distribution they are based on.  The first stack
-is based on `debian:testing`. The second, more recently introduced stack
+is based on `debian:testing`. The second, more recently-introduced stack,
 is based only on Debian stable releases.  Rocker images always point to specific
 stable releases (`jessie`, `stretch`), and do not use the tag `debian:stable`,
 which is a rolling tag that always points to the most
@@ -367,8 +365,8 @@ aims and thus provide different images, as shown in Tables 1 & 2 below.
 
 ### The `debian:testing`-based images
 
-The `debian:testing` stack aims to makes the most efficient use of
-upstream builds -- the precompiled `.deb` binaries provided by the
+The `debian:testing` stack aims to make the most efficient use of
+upstream builds: the pre-compiled `.deb` binaries provided by the
 Debian repositories.  It is both quicker and easier to install software
 from binaries, since the package manager (`apt`) manages the necessary
 (binary) dependencies and bypasses the time-consuming process of compiling
@@ -382,22 +380,22 @@ bleeding edge of packages built for Debian when necessary.  For instance,
 the `r-base` image provided by Rocker installs the most recent version of
 R as a binary from Debian `unstable`.  Similarly, recent versions of many
 popular R packages can also be installed through the package manager,
-e.g. `apt-get install r-cran-xml`.  This can be particularly helpful
+_e.g._, `apt-get install r-cran-xml`.  This can be particularly helpful
 for packages with external system dependencies (such as `libxml2-dev`
 in this example) which cannot be installed from the R console as they 
 are system dependencies rather than R packages installed from within R.
 We should note, however, that only about 500 of the over
-11000 CRAN packages are available as Debian packages. 
+11,000 CRAN packages are available as Debian packages. 
 
 As the names `testing` and `unstable` imply, this approach is not
 without challenges.  The particular version of any given package can
 change as packages move from `unstable` into `testing`. New versions
 are sent to `unstable` during the normal course of Debian development.
-This can occasionally break an previously working installation command
+This can occasionally break an previously-working installation command
 in a Dockerfile until the maintainer redirects the package manager to
 install a package from the `unstable` sources that could previously
 be installed from `testing`, or vice versa (using the `-t` option in
-`apt`)  That said, packages only migrate from 
+`apt`).  That said, packages only migrate from 
 `unstable` to `testing` after a period of several days---and if the 
 migration and installation of the particular version is free of 
 interactions with other packages in their dependency graph. That way,
@@ -406,13 +404,13 @@ stable yet current.
 
 Relative to `stable`, the `testing` stack thus offers the following advantages: 
 
-1. These Dockerfiles are easy to develop and extend because almost all software can be installed through the package manager
-2. These Dockerfiles always install the most recent available software
-3. These Dockerfiles can almost always build relatively quickly
+1. These Dockerfiles are easy to develop and extend because almost all software can be installed through the package manager.
+2. These Dockerfiles always install the most recent available software.
+3. These Dockerfiles can almost always build relatively quickly.
 
 and these down-sides:
 
-1. These Dockerfiles require occasional minor maintenance to ensure successful builds. (e.g. changing an installation directive from `unstable` to `testing` or vice versa)
+1. These Dockerfiles require occasional minor maintenance to ensure successful builds. (_e.g._, changing an installation directive from `unstable` to `testing` or vice versa).
 2. The resulting images are inherently dynamic: rebuilding the same Dockerfile months or years apart will generate images with significantly different versions of software installed.
 3. The use of apt pinning may be unfamiliar to some users, where the user must ultimately be responsible to ensure compatibility \citep{apt_pinning}.
 
@@ -426,14 +424,14 @@ that it is designated as the official image for the R language by the
 Docker organization itself.  This official image is reviewed and then
 built by employees of Docker Inc based on a Dockerfile maintained by
 the Rocker team.  Consequently, users should refer to this image in
-Docker commands without an organization namespace, e.g. `docker run -t
+Docker commands without an organization namespace, _e.g._, `docker run -t
 r-base` to access the official image.  All other images in the Rocker
 project are not individually reviewed and built by Docker Inc and must
 be referenced using the `rocker` namespace,
-e.g. `docker run -ti rocker/r-devel`.
+_e.g._, `docker run -ti rocker/r-devel`.
 
 Several of the images in this stack are oriented towards the R
-development community. `r-devel`, `drd`, `r-devel-san` &
+development community: `r-devel`, `drd`, `r-devel-san` &
 `r-devel-ubsan-clang` all add a copy of the development version of R
 side-by-side the current release of R provided by `r-base`.  On these
 images, the development version is aliased to `RD` to distinguish from
@@ -504,14 +502,14 @@ This stack was introduced much more recently (November 2016)
 in response to considerable user input and requests. The key
 feature of this stack is the ability to run older versions of R along
 with the then-contemporaneous versions of R packages.  A user specifies the
-version desired using an image tag, e.g.  `rocker/r-ver:3.3.1` will
+version desired using an image tag, _e.g._,  `rocker/r-ver:3.3.1` will
 refer to an image with R version 3.3.1 installed.  Omitting the tag
 is equivalent to using the tag `latest`, which, as the name implies,
 will always point to an image using the current R release.  Thus, users
 wanting to create downstream Dockerfiles which are based on the current
 release at time (but will continue to reconstruct the same environment in
 the future after newer R versions are released) should explicitly include
-the corresponding version tag, e.g. `rocker/r-ver:3.4.2` at the time
+the corresponding version tag, _e.g._, `rocker/r-ver:3.4.2` at the time
 of writing, and not the `latest` tag.  Users can also run the current
 development version of R using the tag `devel`, which is built nightly
 from R-devel sources from `subversion`.
@@ -531,20 +529,20 @@ can be installed in the usual way using `bioclite`, which automatically
 selects the Bioconductor release corresponding to the version of R in use.
 
 **Version tags**:  The version tags are propagated throughout this
-stack: _e.g._, `rocker/tidyverse:devel` will provide the currently
-released versions of the R packages in the `tidyverse` \citep{tidyverse}
+stack: _e.g._, `rocker/tidyverse:devel` will provide the currently-released
+versions of the R packages in the `tidyverse` \citep{tidyverse}
 installed on the nightly build of R-devel.  Developers building packages
 on this stack are encouraged to tag their images accordingly as well.
 Table 3 indicates which versions of R are currently available in the
 stack, going back to `3.1.0`.  While older versions may be added to
 the stack at a later date, we note that the MRAN snapshots began in
-starting 2014-09-17 and thus go back only to the R `3.1` era.  Each tag must
+2014-09-17 and thus go back only to the R `3.1` era.  Each tag must
 be built from a separate Dockerfile, enabling minor differences in the
 build instructions to accommodate changing dependencies.  Dockerfiles for
-past versions (e.g. < `3.4.0` currently) are intended to remain static
+past versions (_e.g._, prior to `3.4.2` currently) are intended to remain static
 over the long term, while the tag for the current version, `latest`,
 and `devel` may be tweaked to accommodate new features or dependencies.
-Version tags also obey semantics, so that omitting the second or third
+Version tags also obey semantics so that omitting the second or third
 position of the tag is identical to asking for the most recent version:
 i.e. `rocker/verse:3.3` is the same as `rocker/verse:3.3.3`, and 
 `rocker/verse:3` is (at the time of writing), `rocker/verse:3.4.2`.
@@ -564,14 +562,14 @@ needed to compile R that are not required at runtime are removed once R is
 installed, keeping the base images light-weight for faster download times.
 While most system dependencies required by common R packages can still
 be installed from the `apt` repositories, occasionally a more recent
-version must be compiled from source (e.g. the Gibbs Sampling program
+version must be compiled from source (_e.g._, the Gibbs Sampling program
 JAGS \citep{jags}, and the geospatial toolkit GDAL, must both be compiled from source
 on `debian:jessie` images).  In this stack, users should avoid installing R
-packages using `apt` without careful consideration, as this will install a second, 
-probably different version
-of R from the Debian repositories and a dated version of the R package
-(since any `r-cran-pkgname` package in the Debian repositories will
-depend on `r-base` in `apt` as well).
+packages using `apt` without careful consideration as this will install a second 
+(probably different) version
+of R from the Debian repositories, and a dated version of the R package
+since any `r-cran-pkgname` package in the Debian repositories will
+depend on `r-base` in `apt` as well.
 
 
 **Build schedule**: All images are built automatically from
@@ -612,15 +610,15 @@ downstream Dockerfile developers to add additional persistent services
 or shutdown scripts that should be run when a container starts up or
 shuts down.  The `rstudio` image uses such a start-up script to configure
 user settings such as login password and permissions through environmental
-variables at run time.  <!-- link wiki howto page? -->
+variables at run time.  
 
 The `tidyverse` image contains all required and suggested dependencies
 of the commonly-used `tidyverse` and `devtools` R packages, including
-external database libraries (e.g. MariaDB and PostgreSQL).  Users should
+external database libraries (_e.g._, MariaDB and PostgreSQL).  Users should
 consult the package Dockerfiles or `installed.packages()` list directly
 for a complete list of installed packages.  The `verse` library adds
 commonly-used dependencies, notably a large but not comprehensive LaTeX
-environment and Java development libraries.  Previously the Rocker
+environment and Java development libraries.  Previously, the Rocker
 project provided the image `hadleyverse` which was since divided into
 `tidyverse` and `verse` through community input.
 
@@ -646,7 +644,7 @@ Table: Available tags in the `rocker-versioned` stack.
 Several images in the `rocker-versioned` stack can be customized on build
 when built locally (rather than pulling prebuilt images from Docker Hub)
 by using the `--build-arg` option of `docker build`.   In the `r-ver`
-image, users can set `R_VERSION`, `BUILD_DATE` (MRAN default snapshot).
+image, users can set `R_VERSION` and `BUILD_DATE` (MRAN default snapshot).
 In the `rstudio` image users can set `RSTUDIO_VERSION` (otherwise defaults
 to the most recent version), and the `PANDOC_TEMPLATES_VERSION` .
 
@@ -654,23 +652,6 @@ This stack also makes use of Docker metadata labels defined by
 <http://schema-label.org>,
 indicating image `license` (GPL-2.0), `vcs-url` (GitHub repository), and `vendor` (Rocker Project).  These metadata can be altered or extended in downstream images. 
 
-
-<!--
-
-### Maintenance and Updates
-
-These images are actively maintained.  This means that while an effort is made to preserve the general function of these images over time, both these Dockerfiles and the resulting images are subject to some change over time.  In particular:
-
-- Images are regularly re-built on Docker Hub whenever their base image changes, starting with changes to `debian` Docker image.  This is the rough equivalent of running `apt-get upgrade` on `debian`, since all `apt-get` commands are re-run and will pull in the most current sources.  This allows the images to receive security updates to any packages installed from the `debian` repositories, but will not in general change the versions of any software and is very unlikely to break anything.
-
-- The Dockerfiles themselves are subject to change, to improve performance, ease of use, readability, or other concerns raised in the issues.  These changes should also not alter the general behavior of R or R packages on the image.  These changes can be seen in the git history.  The [rocker-versioned](https://github.com/rocker-org/rocker-versioned) repo will use its own semantic version tagging to indicate changes to this repository, with snapshots from these tags archived on Zenodo.
-
-
-### License 
-
-The Dockerfiles in this repository are licensed under the GPL 2 or later.
-
---> 
 
 
 
