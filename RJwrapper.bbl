@@ -1,0 +1,129 @@
+\begin{thebibliography}{18}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Bercot(2017)]{s6}
+L.~Bercot.
+\newblock \emph{s6: skarnet.org's small and secure supervision software suite},
+  2017.
+\newblock URL \url{https://skarnet.org/software/s6/}.
+
+\bibitem[Boettiger(2015)]{Boettiger2015}
+C.~Boettiger.
+\newblock {An introduction to Docker for reproducible research, with examples
+  from the R environment}.
+\newblock \emph{ACM SIGOPS Operating Systems Review}, 49\penalty0 (1):\penalty0
+  71--79, 2015.
+\newblock \doi{10.1145/2723872.2723882}.
+\newblock URL \url{https://dl.acm.org/citation.cfm?id=2723882
+  http://arxiv.org/abs/1410.0846}.
+
+\bibitem[Boettiger and Eddelbuettel(2014)]{edd2014}
+C.~Boettiger and D.~Eddelbuettel.
+\newblock {Introducing Rocker}: {Docker for R}, 2014.
+\newblock URL
+  \url{https://ropensci.org/blog/blog/2014/10/23/introducing-rocker}.
+
+\bibitem[Cetinkaya-Rundel and Rundel(2017)]{Mine}
+M.~Cetinkaya-Rundel and C.~W. Rundel.
+\newblock Infrastructure and tools for teaching computing throughout the
+  statistical curriculum.
+\newblock \emph{PeerJ Preprints}, 5:\penalty0 e3181v1, Aug. 2017.
+\newblock ISSN 2167-9843.
+\newblock \doi{10.7287/peerj.preprints.3181v1}.
+\newblock URL \url{https://doi.org/10.7287/peerj.preprints.3181v1}.
+
+\bibitem[Clark et~al.(2014)Clark, Culich, Hamlin, and Lovett]{Clark2014}
+D.~Clark, A.~Culich, B.~Hamlin, and R.~Lovett.
+\newblock {BCE: Berkeley's Common Scientific Compute Environment for Research
+  and Education}.
+\newblock \emph{Proceedings of the 13th Python in Science Conference (SciPy
+  2014)}, pages 1--8, 2014.
+
+\bibitem[Csárdi(2017)]{rhub}
+G.~Csárdi.
+\newblock \emph{rhub: Connect to 'R-hub', from 'R'}, 2017.
+\newblock URL \url{https://github.com/r-hub/rhub}.
+\newblock R package version 1.0.1.
+
+\bibitem[{Debian Project}(2017)]{apt_pinning}
+{Debian Project}.
+\newblock Apt-preferences overview, 2017.
+\newblock URL \url{https://wiki.debian.org/AptPreferences}.
+
+\bibitem[Docker(2015)]{what-docker}
+Docker.
+\newblock What is {Docker}?, 2015.
+\newblock URL \url{https://www.docker.com/what-docker}.
+
+\bibitem[Eddelbuettel(2014)]{edd_sanitizers}
+D.~Eddelbuettel.
+\newblock sanitizers, 2014.
+\newblock URL \url{http://dirk.eddelbuettel.com/code/sanitizers.html}.
+
+\bibitem[{LBNL}(2017)]{singularity}
+{Lawrence Berkeley National Laboratories}.
+\newblock Singularity, 2017.
+\newblock URL \url{http://singularity.lbl.gov/}.
+
+\bibitem[Ludaescher et~al.(2017)Ludaescher, Chard, Turk, Stodden, and
+  Gaffney]{wholetale}
+B.~Ludaescher, K.~Chard, M.~Turk, V.~Stodden, and N.~Gaffney.
+\newblock {The Whole Tale}: Merging science and cyberinfrastructure pathways,
+  2017.
+\newblock URL \url{https://wholetale.org/}.
+
+\bibitem[Plummer(2017)]{jags}
+M.~Plummer.
+\newblock {JAGS}: {A} program for analysis of {Bayesian} graphical models using
+  {Gibbs} sampling, 2017.
+\newblock URL \url{http://mcmc-jags.sourceforge.net/}.
+\newblock Version 4.3.0.
+
+\bibitem[{Revolution Analytics}(2017)]{MRAN}
+{Revolution Analytics}.
+\newblock {Microsoft R Application Network}, 2017.
+\newblock URL \url{https://mran.microsoft.com}.
+
+\bibitem[Stewart et~al.(2015)Stewart, Turner, Vaughn, Gaffney, Cockerill,
+  Foster, Hancock, Merchant, Skidmore, Stanzione, Taylor, and
+  Tuecke]{jetstream}
+C.~A. Stewart, G.~Turner, M.~Vaughn, N.~I. Gaffney, T.~M. Cockerill, I.~Foster,
+  D.~Hancock, N.~Merchant, E.~Skidmore, D.~Stanzione, J.~Taylor, and S.~Tuecke.
+\newblock {Jetstream: A self-provisioned, scalable science and engineering
+  cloud environment}.
+\newblock In \emph{Proceedings of the 2015 XSEDE Conference on Scientific
+  Advancements Enabled by Enhanced Cyberinfrastructure - XSEDE '15}, pages
+  1--8, New York, New York, USA, 2015. ACM Press.
+\newblock ISBN 9781450337205.
+\newblock \doi{10.1145/2792745.2792774}.
+\newblock URL \url{http://dl.acm.org/citation.cfm?doid=2792745.2792774}.
+
+\bibitem[{The Linux Foundation: Projects}(2017)]{oci}
+{The Linux Foundation: Projects}.
+\newblock {The Open Container Initiative}, 2017.
+\newblock URL \url{https://www.opencontainers.org/}.
+
+\bibitem[{UC Berkeley}(2017)]{data8}
+{UC Berkeley}.
+\newblock {Curriculum Overview} | {Division of Data Sciences}, 2017.
+\newblock URL \url{http://data.berkeley.edu/education/curriculum-overview}.
+
+\bibitem[Ushey et~al.(2016)Ushey, McPherson, Cheng, Atkins, and
+  Allaire]{packrat}
+K.~Ushey, J.~McPherson, J.~Cheng, A.~Atkins, and J.~Allaire.
+\newblock \emph{packrat: A Dependency Management System for Projects and their
+  R Package Dependencies}, 2016.
+\newblock URL \url{https://CRAN.R-project.org/package=packrat}.
+\newblock R package version 0.4.8-1.
+
+\bibitem[Wickham(2017)]{tidyverse}
+H.~Wickham.
+\newblock \emph{tidyverse: Easily Install and Load 'Tidyverse' Packages}, 2017.
+\newblock URL \url{https://CRAN.R-project.org/package=tidyverse}.
+\newblock R package version 1.1.1.
+
+\end{thebibliography}
