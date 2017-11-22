@@ -39,7 +39,7 @@ Docker is a popular open-source tool to create, distribute, deploy,
 and run software applications using *containers*.  Containers provide a
 virtual environment (see \citet{Clark2014} for an overview of common virtual environments) requiring all operating-system components an application needs to run:
 code, runtime, system tools, system runtime.  Docker containers are
-lightweight as they share the operating system kernel, starting instantly
+lightweight as they share the operating system kernel, start instantly
 using a layered filesystem which minimizes disk footprint and download time,
 are built on open standards that run on all major platforms (Linux, Mac,
 Windows), and provide an added layer of security by running an application
@@ -50,12 +50,14 @@ a container as analogous to loading an R package; it makes a set of software
 functions available.  A Docker "image" is a binary archive of that software,
 analogous to an R binary package: a given version is downloaded only
 once, and can then be "run" to create a container whenever it is needed.
-A "Dockerfile" is a recipe, the source-code, to create a Docker image.  Development
-and contributions to the Rocker project focuses on the construction, organization
+A "Dockerfile" is a recipe, the source-code, to create a Docker image.  
+Pre-built Docker images are publicly available through Docker Hub, which
+plays a role for central distribution similar to CRAN in our analogy.  Development
+and contributions to the Rocker project focus on the construction, organization
 and maintenance of these Dockerfiles.  
 
 
-# Design principles & use cases
+# Design principles and use cases
 
 
 Docker gives users very convenient access to pre-configured and
@@ -66,7 +68,7 @@ generally focus on one (current) release.  For example, R users on
 Windows may run RStudio Server or Shiny Server locally just by launching
 a single command (once Docker itself is installed). Another common
 use-case is access to R-devel without affecting the local system.
-Here, we detail some of the principle use cases motivating these
+Here, we detail some of the principal use cases motivating these
 containerized versions of R environments, and the design principles that
 help make them work.
 
@@ -79,7 +81,7 @@ reliable mechanism to deploy a custom R environment to a remote server, such
 as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean, NSF's
 Jetstream servers \citep{jetstream}, or private or institutional server hardware.
 Rocker containers are  also easy to run locally on most modern laptops
-by first installing the appropriate Docker command (or distribution) for Windows, MacOS, and Linux-based
+by first issuing the appropriate Docker command (or distribution) for Windows, MacOS, and Linux-based
 operating systems. By sharing volumes with the local host, users can still manipulate
 files with familiar, native tools while performing computation through a reproducible,
 containerized environment \citep{Boettiger2015}. Being
@@ -92,14 +94,14 @@ getting code to run appropriately in a remote environment can be a major
 undertaking, requiring both time and knowledge many would-be users may
 not have. 
 
-For instance, the following bash commands install Docker on almost any 
-Linux-based server and then launch a Rocker container providing the 
+For instance, on any platform wiht Docker installed, the following Docker
+command will launch a Rocker container providing the 
 RStudio-server environment over a web interface. 
 
     wget -qO- https://get.docker.com/ | sh 
     sudo docker run -p 8787:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
 
-The `docker run` option `-p` sets the port on which RStudio will appear, 8787 is
+The `docker run` option `-p` sets the port on which RStudio will appear, for which 8787 is
 the RStudio default (adding your user to the docker group to avoids the
 need for a `sudo` command to call `docker`: `sudo usermod -g docker $USER`). 
 Many academic and commercial cloud providers make it
@@ -186,10 +188,10 @@ on an older R release with prior versions of R packages, again without
 having to make any alteration to one's local R install.  Another common
 use case is to access a container with support for particular
 options such as using gcc or clang compiler sanitizers \citep{edd_sanitizers}.
-These requires R itself be built with specialized settings that may not be
+These require R itself be built with specialized settings that may not be
 not available or familiar to many R users on their native system, but can
 be easily deployed by pulling the Rocker images `rocker/r-devel-san` or
-`rocker/r-devel-ubsan-clang`.  
+`rocker/r-devel-ubsan-clang`.   
 
 This sandboxing feature is also valuable in the 
 remote computing context, allowing system administrators to grant
@@ -201,7 +203,11 @@ through the RStudio\textsuperscript{\textregistered} interface do not by default
 to install R packages. Granting these users root privileges in the container still leaves
 them sandboxed from the host container.  Further, Docker images can
 be deployed from a machine without root privileges through the alternate container
-runtime environment, Singularity \citep{singularity}.  Unlike traditional virtual machines,
+runtime environment, Singularity \citep{singularity}.  
+Sandboxing also serves an important function
+in reproducible research by making it easier to test a specified environment
+in isolation from the host machine.
+Unlike traditional virtual machines,
 these containers do not impose a large footprint of reserved resources as
 a typical host can easily support 100s of containers \citep{what-docker}.  
 
@@ -517,7 +523,8 @@ from R-devel sources from `subversion`.
 **MRAN archives**: To facilitate installation of only contemporaneous
 versions of R packages on these images, the default CRAN mirror from which
 to install R packages is fixed to a snapshot of CRAN corresponding to
-the last date for which that version of R was the latest release. These
+the last date for which that version of R was current (e.g. `3.4.2` was released
+on 2017-09-28, thus `3.4.1` is pinned to the MRAN snapshot for that date). These
 snapshots are provided by the MRAN archive created by Revolution
 Analytics (now part of Microsoft). It archives daily snapshots
 of all of CRAN from which a user can install packages with the usual
