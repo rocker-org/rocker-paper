@@ -112,14 +112,6 @@ into a browser and entering the appropriate password. This provides the user wit
 interactive environment running on a remote machine while requiring
 a minimum of expertise.   
 
-Deploying Docker containers on centrally administrated multi-user machines, such
-as department or university clusters, has previously been more difficult, since
-system adminstrators do not want to allow the elevated user permissions the Docker
-runtime environment requires.  To work around this problem, Lawrence Berkeley National
-Labs (LBNL) has made 'Singularity' \citep{singularity}: a container runtime environment that users can
-both install and use to run most Docker containers without requiring root privileges,
-making it easier to deploy Rocker containers in this context as well. 
-
 This portability is also valuable in an instructional context. Requiring students
 to install all necessary software on personal laptops can be particularly challenging
 for short workshops, where download and installation time and troubleshooting across
@@ -131,8 +123,28 @@ effective in our own experience in both workshops and semester-length courses. S
 cloud deployments have been scaled to courses of 100s of students, _e.g._, at Duke \citep{Mine} and
 UC Berkeley \citep{data8}.
 
+## HPC application
 
+The portability of Rocker images can be particularly valuable in High Performance Computing
+contexts Setting up a specific R environment on High Performance Computing platforms and other 
+centrally administrated multi-user machines or clusters has traditionally been challenging
+due to restrictions on root access that may be needed to install certain libraries. 
+Versions of R and packages installed by the system administrator may also lag behind
+the most recent releases. Deploying Docker containers on HPC systems has previously
+been more very problematic since most
+system adminstrators do not want to allow the elevated user permissions the Docker
+runtime environment requires.  To work around this problem, Lawrence Berkeley National
+Labs (LBNL) has made 'Singularity' \citep{singularity}: a container runtime environment that users can
+both install and use to run most Docker containers without requiring root privileges. 
+Singularity has seen rapid adoption in the HPC community (<http://singularity.lbl.gov/install-request>).
+Rocker containers can be run through Singularity with a single command much like
+the native Docker commands, _e.g._
 
+```
+singularity exec docker://rocker/tidyverse:latest R
+```
+
+More details can be found in the Singularity documentation.
 
 ### Interfaces
 
