@@ -27,36 +27,38 @@ Docker is a popular open-source tool to create, distribute, deploy, and
 run software applications using \emph{containers}. Containers provide a
 virtual environment (see \citet{Clark2014} for an overview of common
 virtual environments) requiring all operating-system components an
-application needs to run: code, runtime, system tools, system runtime.
-Docker containers are lightweight as they share the operating system
-kernel, starting instantly using a layered filesystem which minimizes
-disk footprint and download time, are built on open standards that run
-on all major platforms (Linux, Mac, Windows), and provide an added layer
-of security by running an application in an isolated environment
-\citep{what-docker}. Familiarity with a few key terms is helpful in
-understanding this paper. The term ``container'' refers to an isolated
-software environment on a computer. R users can think of running a
-container as analogous to loading an R package; it makes a set of
-software functions available. A Docker ``image'' is a binary archive of
-that software, analogous to an R binary package: a given version is
-downloaded only once, and can then be ``run'' to create a container
-whenever it is needed. A ``Dockerfile'' is a recipe, the source-code, to
-create a Docker image. Development and contributions to the Rocker
-project focuses on the construction, organization and maintenance of
-these Dockerfiles.
+application needs to run. Docker containers are lightweight as they
+share the operating system kernel, start instantly using a layered
+filesystem which minimizes disk footprint and download time, are built
+on open standards that run on all major platforms (Linux, Mac, Windows),
+and provide an added layer of security by running an application in an
+isolated environment \citep{what-docker}. Familiarity with a few key
+terms is helpful in understanding this paper. The term ``container''
+refers to an isolated software environment on a computer. R users can
+think of running a container as analogous to loading an R package; a
+container is an active instance of a static Docker image. A Docker
+``image'' is a binary archive of that software, analogous to an R binary
+package: a given version is downloaded only once, and can then be
+``run'' to create a container whenever it is needed. A ``Dockerfile'' is
+a recipe, the source-code, to create a Docker image.\\
+Pre-built Docker images are publicly available through Docker Hub, which
+plays a role for central distribution similar to CRAN in our analogy.
+Development and contributions to the Rocker project focus on the
+construction, organization and maintenance of these Dockerfiles.
 
-\section{Design principles \& use
-cases}\label{design-principles-use-cases}
+\section{Design principles and use
+cases}\label{design-principles-and-use-cases}
 
 Docker gives users very convenient access to pre-configured and
 pre-built \emph{binary} images that ``just work''. This allows R users
 to access a wider-variety of ready-to-use environments than provided by
 either the R Project itself or, say, their distribution which will
 generally focus on one (current) release. For example, R users on
-Windows may run RStudio Server or Shiny Server locally just by launching
+Windows may run RStudio\textsuperscript{\textregistered} Server or
+Shiny\textsuperscript{\textregistered} Server locally just by launching
 a single command (once Docker itself is installed). Another common
 use-case is access to R-devel without affecting the local system. Here,
-we detail some of the principle use cases motivating these containerized
+we detail some of the principal use cases motivating these containerized
 versions of R environments, and the design principles that help make
 them work.
 
@@ -68,9 +70,8 @@ reliable mechanism to deploy a custom R environment to a remote server,
 such as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean,
 NSF's Jetstream servers \citep{jetstream}, or private or institutional
 server hardware. Rocker containers are also easy to run locally on most
-modern laptops by first installing the appropriate Docker command (or
-distribution) for Windows, MacOS, and Linux-based operating systems. By
-sharing volumes with the local host, users can still manipulate files
+modern laptops using Windows, MacOS, or Linux-based operating systems.
+By sharing volumes with the local host, users can still manipulate files
 with familiar, native tools while performing computation through a
 reproducible, containerized environment \citep{Boettiger2015}. Being
 able to test code in a predictable, pre-configured R environment on a
@@ -82,9 +83,9 @@ such containerization, getting code to run appropriately in a remote
 environment can be a major undertaking, requiring both time and
 knowledge many would-be users may not have.
 
-For instance, the following bash commands install Docker on almost any
-Linux-based server and then launch a Rocker container providing the
-RStudio-server environment over a web interface.
+For instance, on any platform wiht Docker installed, the following
+Docker command will launch a Rocker container providing the
+rstudio-server environment over a web interface.
 
 \begin{verbatim}
 wget -qO- https://get.docker.com/ | sh 
@@ -92,27 +93,18 @@ sudo docker run -p 8787:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
 \end{verbatim}
 
 The \texttt{docker\ run} option \texttt{-p} sets the port on which
-RStudio will appear, 8787 is the RStudio default (adding your user to
-the docker group to avoids the need for a \texttt{sudo} command to call
-\texttt{docker}: \texttt{sudo\ usermod\ -g\ docker\ \$USER}). Many
-academic and commercial cloud providers make it possible to execute such
-code snippets when a container is launched, without ever needing to
+RStudio\textsuperscript{\textregistered} will appear, for which 8787 is
+the default (adding your user to the docker group to avoids the need for
+a \texttt{sudo} command to call \texttt{docker}:
+\texttt{sudo\ usermod\ -g\ docker\ \$USER}). Many academic and
+commercial cloud providers make it possible to execute such code
+snippets when a container is launched, without ever needing to
 \texttt{ssh} into the machine. The user may log into the server merely
 by pasting its IP address or DNS name (followed by the chosen port,
 \emph{e.g.}, \texttt{:8787}) into a browser and entering the appropriate
 password. This provides the user with a familiar, interactive
 environment running on a remote machine while requiring a minimum of
 expertise.
-
-Deploying Docker containers on centrally administrated multi-user
-machines, such as department or university clusters, has previously been
-more difficult, since system adminstrators do not want to allow the
-elevated user permissions the Docker runtime environment requires. To
-work around this problem, Lawrence Berkeley National Labs (LBNL) has
-made `Singularity' \citep{singularity}: a container runtime environment
-that users can both install and use to run most Docker containers
-without requiring root privileges, making it easier to deploy Rocker
-containers in this context as well.
 
 This portability is also valuable in an instructional context. Requiring
 students to install all necessary software on personal laptops can be
@@ -127,6 +119,32 @@ effective in our own experience in both workshops and semester-length
 courses. Similar Docker-based cloud deployments have been scaled to
 courses of 100s of students, \emph{e.g.}, at Duke \citep{Mine} and UC
 Berkeley \citep{data8}.
+
+\subsection{HPC application}\label{hpc-application}
+
+The portability of Rocker images can be particularly valuable in High
+Performance Computing contexts Setting up a specific R environment on
+High Performance Computing platforms and other centrally administrated
+multi-user machines or clusters has traditionally been challenging due
+to restrictions on root access that may be needed to install certain
+libraries. Versions of R and packages installed by the system
+administrator may also lag behind the most recent releases. Deploying
+Docker containers on HPC systems has previously been more very
+problematic since most system adminstrators do not want to allow the
+elevated user permissions the Docker runtime environment requires. To
+work around this problem, Lawrence Berkeley National Labs (LBNL) has
+made `Singularity' \citep{singularity}: a container runtime environment
+that users can both install and use to run most Docker containers
+without requiring root privileges. Singularity has seen rapid adoption
+in the HPC community (\url{http://singularity.lbl.gov/install-request}).
+Rocker containers can be run through Singularity with a single command
+much like the native Docker commands, \emph{e.g.}
+
+\begin{verbatim}
+singularity exec docker://rocker/tidyverse:latest R
+\end{verbatim}
+
+More details can be found in the Singularity documentation.
 
 \subsubsection{Interfaces}\label{interfaces}
 
@@ -144,7 +162,7 @@ the browser removes these barriers. Rocker images include the
 RStudio-server software pre-installed and configured with the explicit
 permission of RStudio\textsuperscript{\textregistered} Inc.
 
-Users can access a root \texttt{bash} shell in a running Rocker
+Users can access a \texttt{bash} shell running as root within a Rocker
 container using
 
 \begin{verbatim}
@@ -157,10 +175,10 @@ RScript or bash shell without running RStudio, which can be useful for
 batch jobs or for anyone who prefers that environment.
 
 As with any interactive Docker container, users should specify the
-interactive (\texttt{-i}) and terminal (\texttt{-t}, here combined with
-interactive as \texttt{-ti}) flags, and specify the desired executable
-environment (\emph{e.g.}, \texttt{R}, though other common options may be
-\texttt{Rscript} or \texttt{bash}):
+terminal (\texttt{-t}) and interactive (\texttt{-i}) flags, (here
+combined with interactive as \texttt{-ti}), and specify the desired
+executable environment (\emph{e.g.}, \texttt{R}, though other common
+options may be \texttt{Rscript} or \texttt{bash}):
 
 \begin{verbatim}
 docker run --rm -ti rocker/tidyverse R
@@ -188,10 +206,10 @@ use Rocker to run code on an older R release with prior versions of R
 packages, again without having to make any alteration to one's local R
 install. Another common use case is to access a container with support
 for particular options such as using gcc or clang compiler sanitizers
-\citep{edd_sanitizers}. These requires R itself be built with
-specialized settings that may not be not available or familiar to many R
-users on their native system, but can be easily deployed by pulling the
-Rocker images \texttt{rocker/r-devel-san} or
+\citep{edd_sanitizers}. These require R itself be built with specialized
+settings that may not be not available or familiar to many R users on
+their native system, but can be easily deployed by pulling the Rocker
+images \texttt{rocker/r-devel-san} or
 \texttt{rocker/r-devel-ubsan-clang}.
 
 This sandboxing feature is also valuable in the remote computing
@@ -204,12 +222,12 @@ logging into a container through the
 RStudio\textsuperscript{\textregistered} interface do not by default
 have root privileges, though are able to install R packages. Granting
 these users root privileges in the container still leaves them sandboxed
-from the host container. Further, Docker images can be deployed from a
-machine without root privileges through the alternate container runtime
-environment, Singularity \citep{singularity}. Unlike traditional virtual
-machines, these containers do not impose a large footprint of reserved
-resources as a typical host can easily support 100s of containers
-\citep{what-docker}.
+from the host container.\\
+Sandboxing also serves an important function in reproducible research by
+making it easier to test a specified environment in isolation from the
+host machine. Unlike traditional virtual machines, these containers do
+not impose a large footprint of reserved resources as a typical host can
+easily support 100s of containers \citep{what-docker}.
 
 \subsubsection{Transparent}\label{transparent}
 
@@ -218,17 +236,17 @@ image by examining the associated Dockerfile recipe, which provides a
 concise, human-readable record of the installation. All Rocker images
 use automated builds through Docker Hub, which also acts as the central,
 default repository distributing the images. Using automated builds
-rather than uploading pre-built image binaries to the Docker Hub avoids
-the potential for the build not to match the recipe. The corresponding
+rather than uploading pre-built image binaries to Docker Hub avoids the
+potential for the build not to match the recipe. The corresponding
 Dockerfile is visible both on the Docker Hub and in the linked GitHub
-repository of the Rocker project (\url{https://github.com/rocker-org}),
-which provides a transparent versioned history of all changes made to
-these recipes, as well as documentation, a community wiki, and issue
-trackers for discussing proposed changes, bugs, improvements to the
-Dockerfiles and troubleshoot any issues users may encounter. Having
-these public source files built automatically by a trusted provider
-(Docker Hub), rather than built locally and uploaded only in binary form
-provides is also useful from a security perspective in avoiding malware.
+repository, which provides a transparent versioned history of all
+changes made to these recipes, as well as documentation, a community
+wiki, and issue trackers for discussing proposed changes, bugs,
+improvements to the Dockerfiles and troubleshoot any issues users may
+encounter. Having these public source files built automatically by a
+trusted provider (Docker Hub), rather than built locally and uploaded as
+binaries, is also useful from a security perspective in avoiding
+malware.
 
 \subsubsection{Community Optimized}\label{community-optimized}
 
@@ -237,18 +255,22 @@ publicly hosted, reproducible recipe facilitates community input into
 configuration details. R and many of its packages and related software
 can be configured with a wide range of options, compilers, different
 linear-algebra libraries and so forth. While this flexibility reflects
-varying needs, many users rely on default settings which may be
-optimized more for simplicity of installation than performance. The
-Rocker recipes reflect significant community input on these choices, as
-well as the considerable experience and expertise of the R Debian
-maintainer of 20 years in what configuration options to use. This helps
-create a more finely tuned, optimized reference implementation of the R
-environment as well as a platform for comparing and discussing these
-concerns which are often overlooked elsewhere. Issues and Pull Requests
-on the Rocker repositories on GitHub attest to these discussions and
-improvements. Widespread use of the Rocker image helps promote both
-testing of these choices and contributions further tweaking the
-configuration from many members of the R community.
+varying needs, many users rely on default settings which are most often
+are optimized more for simplicity of installation rather than than
+performance. The Rocker recipes reflect significant community input on
+these choices. This helps create a more finely tuned, optimized
+reference implementation of the R environment as well as a platform for
+comparing and discussing these concerns which are often overlooked
+elsewhere. Issues and Pull Requests on the Rocker repositories on GitHub
+attest to some of these discussions and improvements. In particular,
+input from the Docker Inc employees through the official approval
+process for the \texttt{r-base} image, expertise from the Debian R
+maintainer and other Debian developers, and both direct and indirect
+feedback from the experience and user-generated documentation from many
+early adopters in the R community has helped shape and strengthen the
+project over the past few years. Widespread use of the Rocker image
+helps promote both testing of these choices and contributions further
+tweaking the configuration from many members of the R community.
 
 \subsubsection{Versioned}\label{versioned}
 
@@ -308,11 +330,12 @@ communities.
 To make extensions transparent and persistent, Rocker images can be
 extended by any user by writing their own Dockerfiles based on an
 appropriate Rocker image. The Dockerfiles in the Rocker stack should
-themselves provide a simple of example of this. A user begins by
-selecting an appropriate base image for their needs: if the
-RStudio\textsuperscript{\textregistered} interface is desired, a user
-might start with \texttt{FROM\ rocker/rstudio}; an image for testing a
-particular C code in an R package might use
+themselves provide a simple of example of this, (as described in the
+following section).\\
+A user begins by selecting an appropriate base image for their needs: if
+the RStudio\textsuperscript{\textregistered} interface is desired, a
+user might start with \texttt{FROM\ rocker/rstudio}; an image for
+testing an R package with compiled code might use
 \texttt{FROM\ rocker/r-devel-san}, an image for reproducing a data
 analysis will probably select a stable version tag in addition to an
 appropriate base library, \emph{e.g.},:
@@ -345,9 +368,10 @@ Source Dockerfiles, supporting scripts and documentation are hosted on
 GitHub under the organization \texttt{rocker-org},
 \url{https://github.com/rocker-org}. The issue tracker and pull requests
 are used for community input, discussions and contributions to these
-images. The Rocker project wiki provides a place to synthesize
-community-contributed documentation, use-cases, and other knowledge
-about using the Rocker images.
+images. The Rocker project wiki,
+\url{https://github.com/rocker-org/rocker/wiki}, provides a place to
+synthesize community-contributed documentation, use-cases, and other
+knowledge about using the Rocker images.
 
 \subsubsection{Images in the Rocker
 Project}\label{images-in-the-rocker-project}
@@ -399,27 +423,24 @@ necessary (binary) dependencies and bypasses the time-consuming process
 of compiling from source. Basing this stack on \texttt{debian:testing}
 means that much more recent versions of commonly-used libraries and
 compilers are available as binaries than would be found in a Debian
-stable release. In order to provide access to the most recent available
-binaries, this stack uses apt-pinning \citep{apt_pinning} to allow the
-\texttt{apt} package manager to also install binaries from
-\texttt{debian:unstable}, which represents the most recent, bleeding
-edge of packages built for Debian when necessary. For instance, the
-\texttt{r-base} image provided by Rocker installs the most recent
-version of R as a binary from Debian \texttt{unstable}. Similarly,
-recent versions of many popular R packages can also be installed through
-the package manager, \emph{e.g.}, \texttt{apt-get\ install\ r-cran-xml}.
-This can be particularly helpful for packages with external system
-dependencies (such as \texttt{libxml2-dev} in this example) which cannot
-be installed from the R console as they are system dependencies rather
-than R packages installed from within R. We should note, however, that
-only about 500 of the over 11,000 CRAN packages are available as Debian
-packages.
+stable release. In order to provide \emph{optional} access to the most
+recent available binaries, this stack uses apt-pinning
+\citep{apt_pinning} to allow the \texttt{apt} package manager to
+\emph{selectively} install binaries from \texttt{debian:unstable}, which
+represents the most recent set of packages built for Debian. Similarly,
+recent versions of many popular R packages can also be installed
+pre-built through the package manager, \emph{e.g.},
+\texttt{apt-get\ install\ r-cran-xml}. This can be particularly helpful
+for packages with external system dependencies (such as
+\texttt{libxml2-dev} in this example) which cannot be installed from the
+R console as they are system dependencies rather than R packages
+installed from within R. We should note, however, that only about 500 of
+the over 11,000 CRAN packages are available as Debian packages.
 
-As the names \texttt{testing} and \texttt{unstable} imply, this approach
-is not without challenges. The particular version of any given package
-can change as packages move from \texttt{unstable} into
-\texttt{testing}. New versions are sent to \texttt{unstable} during the
-normal course of Debian development. This can occasionally break an
+As the names \texttt{testing} and \texttt{unstable} imply, particular
+versions of package can change as packages move from \texttt{unstable}
+into \texttt{testing}. New versions are sent to \texttt{unstable} during
+the normal course of Debian development. This can occasionally break an
 previously-working installation command in a Dockerfile until the
 maintainer redirects the package manager to install a package from the
 \texttt{unstable} sources that could previously be installed from
@@ -431,39 +452,16 @@ interactions with other packages in their dependency graph. That way,
 \texttt{unstable} serves as validation lab which leaves \texttt{testing}
 reasonably stable yet current.
 
-Relative to \texttt{stable}, the \texttt{testing} stack thus offers the
-following advantages:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  These Dockerfiles are easy to develop and extend because almost all
-  software can be installed through the package manager.
-\item
-  These Dockerfiles always install the most recent available software.
-\item
-  These Dockerfiles can almost always build relatively quickly.
-\end{enumerate}
-
-and these down-sides:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  These Dockerfiles require occasional minor maintenance to ensure
-  successful builds. (\emph{e.g.}, changing an installation directive
-  from \texttt{unstable} to \texttt{testing} or vice versa).
-\item
-  The resulting images are inherently dynamic: rebuilding the same
-  Dockerfile months or years apart will generate images with
-  significantly different versions of software installed.
-\item
-  The use of apt pinning may be unfamiliar to some users, where the user
-  must ultimately be responsible to ensure compatibility
-  \citep{apt_pinning}.
-\end{enumerate}
+Relative to \texttt{stable}, the \texttt{testing} stack thus offers some
+advantages as almost all software can be installed through the package
+manager. Installation of binary packages from \texttt{testing} generally
+provides the most recent available software, and installs it quickly as
+a binary. On the other hand, these Dockerfiles may require occasional
+maintenance when packages migrate and/or versions change. The resulting
+images are also inherently dynamic: rebuilding the same Dockerfile
+months or years apart will generate images with significantly different
+versions of software installed as the pool of underlying packages
+changes through time.
 
 \subsubsection{Images overview}\label{images-overview}
 
@@ -476,10 +474,10 @@ language by the Docker organization itself. This official image is
 reviewed and then built by employees of Docker Inc based on a Dockerfile
 maintained by the Rocker team. Consequently, users should refer to this
 image in Docker commands without an organization namespace, \emph{e.g.},
-\texttt{docker\ run\ -t\ r-base} to access the official image. All other
-images in the Rocker project are not individually reviewed and built by
-Docker Inc and must be referenced using the \texttt{rocker} namespace,
-\emph{e.g.}, \texttt{docker\ run\ -ti\ rocker/r-devel}.
+\texttt{docker\ run\ -ti\ r-base} to access the official image. All
+other images in the Rocker project are not individually reviewed and
+built by Docker Inc and must be referenced using the \texttt{rocker}
+namespace, \emph{e.g.}, \texttt{docker\ run\ -ti\ rocker/r-devel}.
 
 Several of the images in this stack are oriented towards the R
 development community: \texttt{r-devel}, \texttt{drd},
@@ -508,9 +506,9 @@ RStudio\textsuperscript{\textregistered} Inc, built on the
 Shiny are registered trademarks of RStudio Inc, and their use and the
 distribution of their software in binary form on Docker Hub has been
 granted to the Rocker project by explicit permission from RStudio. Users
-should review RStudio's trademark use policy
-(\url{http://www.rstudio.com/about/trademark/}) and address inquiries
-about further distribution or other questions to
+should review RStudio\textsuperscript{\textregistered}'s trademark use
+policy (\url{http://www.rstudio.com/about/trademark/}) and address
+inquiries about further distribution or other questions to
 \href{mailto:permissions@rstudio.com}{\nolinkurl{permissions@rstudio.com}}.
 The Rocker project also provides images with
 RStudio\textsuperscript{\textregistered} server and Shiny server in the
@@ -664,17 +662,18 @@ is built nightly from R-devel sources from \texttt{subversion}.
 \textbf{MRAN archives}: To facilitate installation of only
 contemporaneous versions of R packages on these images, the default CRAN
 mirror from which to install R packages is fixed to a snapshot of CRAN
-corresponding to the last date for which that version of R was the
-latest release. These snapshots are provided by the MRAN archive created
-by Revolution Analytics (now part of Microsoft). It archives daily
-snapshots of all of CRAN from which a user can install packages with the
-usual \texttt{install.packages()} function \citep{MRAN}. Users can
-always override this default by passing any current CRAN repository
-explicitly. Unlike CRAN, Bioconductor only updates its repositories
-through bi-annual releases aligned to R's spring release schedule. Thus,
-Bioconductor packages can be installed in the usual way using
-\texttt{bioclite}, which automatically selects the Bioconductor release
-corresponding to the version of R in use.
+corresponding to the last date for which that version of R was current
+(e.g. \texttt{3.4.2} was released on 2017-09-28, thus \texttt{3.4.1} is
+pinned to the MRAN snapshot for that date). These snapshots are provided
+by the MRAN archive created by Revolution Analytics (now part of
+Microsoft). It archives daily snapshots of all of CRAN from which a user
+can install packages with the usual \texttt{install.packages()} function
+\citep{MRAN}. Users can always override this default by passing any
+current CRAN repository explicitly. Unlike CRAN, Bioconductor only
+updates its repositories through bi-annual releases aligned to R's
+spring release schedule. Thus, Bioconductor packages can be installed in
+the usual way using \texttt{bioclite}, which automatically selects the
+Bioconductor release corresponding to the version of R in use.
 
 \textbf{Version tags}: The version tags are propagated throughout this
 stack: \emph{e.g.}, \texttt{rocker/tidyverse:devel} will provide the
@@ -774,7 +773,7 @@ complete list of installed packages. The \texttt{verse} library adds
 commonly-used dependencies, notably a large but not comprehensive LaTeX
 environment and Java development libraries. Previously, the Rocker
 project provided the image \texttt{hadleyverse} which was since divided
-into \texttt{tidyverse} and \texttt{verse} through community input.
+into \texttt{tidyverse} and \texttt{verse} based on community input.
 
 \begin{longtable}[]{@{}lllll@{}}
 \caption{Available tags in the \texttt{rocker-versioned}
