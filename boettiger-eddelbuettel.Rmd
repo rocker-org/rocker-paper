@@ -37,8 +37,7 @@ and evolution. Here we seek to document the project's objectives and uses.
 
 Docker is a popular open-source tool to create, distribute, deploy,
 and run software applications using *containers*.  Containers provide a
-virtual environment (see \citet{Clark2014} for an overview of common virtual environments) requiring all operating-system components an application needs to run:
-code, runtime, system tools, system runtime.  Docker containers are
+virtual environment (see \citet{Clark2014} for an overview of common virtual environments) requiring all operating-system components an application needs to run.  Docker containers are
 lightweight as they share the operating system kernel, start instantly
 using a layered filesystem which minimizes disk footprint and download time,
 are built on open standards that run on all major platforms (Linux, Mac,
@@ -46,8 +45,9 @@ Windows), and provide an added layer of security by running an application
 in an isolated environment \citep{what-docker}.  Familiarity with a few key
 terms is helpful in understanding this paper. The term "container" refers to 
 an isolated software environment on a computer. R users can think of running
-a container as analogous to loading an R package; it makes a set of software
-functions available.  A Docker "image" is a binary archive of that software,
+a container as analogous to loading an R package; a container is an active
+instance of a static Docker image.
+A Docker "image" is a binary archive of that software,
 analogous to an R binary package: a given version is downloaded only
 once, and can then be "run" to create a container whenever it is needed.
 A "Dockerfile" is a recipe, the source-code, to create a Docker image.  
@@ -80,9 +80,9 @@ One common use case for Rocker containers is to provide a fast and
 reliable mechanism to deploy a custom R environment to a remote server, such
 as Amazon Web Services Elastic Compute (AWS EC2), DigitalOcean, NSF's
 Jetstream servers \citep{jetstream}, or private or institutional server hardware.
-Rocker containers are  also easy to run locally on most modern laptops
-by first issuing the appropriate Docker command (or distribution) for Windows, MacOS, and Linux-based
-operating systems. By sharing volumes with the local host, users can still manipulate
+Rocker containers are also easy to run locally on most modern laptops
+using Windows, MacOS, or Linux-based operating systems. 
+By sharing volumes with the local host, users can still manipulate
 files with familiar, native tools while performing computation through a reproducible,
 containerized environment \citep{Boettiger2015}. Being
 able to test code in a predictable, pre-configured R environment on a
@@ -148,7 +148,7 @@ an RStudio\textsuperscript{\textregistered} container through the browser remove
 images include the RStudio-server software pre-installed and configured with
 the explicit permission of RStudio\textsuperscript{\textregistered} Inc. 
 
-Users can access a root `bash` shell in a running Rocker container using 
+Users can access a `bash` shell running as root within a Rocker container using 
 
 ```
 docker exec -ti <container-id> bash
@@ -159,8 +159,8 @@ All Rocker images can also be run as an interactive R, RScript or bash shell wit
 RStudio, which can be useful for batch jobs or for anyone who prefers that environment.
 
 As with any interactive Docker container, users
-should specify the interactive (`-i`) and terminal (`-t`, here combined
-with interactive as `-ti`) flags, and specify the desired executable
+should specify the terminal (`-t`) and interactive (`-i`) flags, (here combined
+with interactive as `-ti`), and specify the desired executable
 environment (_e.g._, `R`, though other common options may be `Rscript` or
 `bash`):
 
@@ -201,9 +201,7 @@ is required to launch Docker containers, though not to access containers already
 running and providing some service such as RStudio. Users logging into a container
 through the RStudio\textsuperscript{\textregistered} interface do not by default have root privileges, though are able
 to install R packages. Granting these users root privileges in the container still leaves
-them sandboxed from the host container.  Further, Docker images can
-be deployed from a machine without root privileges through the alternate container
-runtime environment, Singularity \citep{singularity}.  
+them sandboxed from the host container.   
 Sandboxing also serves an important function
 in reproducible research by making it easier to test a specified environment
 in isolation from the host machine.
@@ -219,15 +217,13 @@ by examining the associated Dockerfile recipe, which provides a concise, human-r
 record of the installation.
 All Rocker images use automated builds through Docker Hub, which also acts as the central,
 default repository distributing the images.  Using automated builds rather than uploading
-pre-built image binaries to the Docker Hub avoids the potential for the build
+pre-built image binaries to Docker Hub avoids the potential for the build
 not to match the recipe.  The corresponding Dockerfile is visible both on the Docker Hub
-and in the linked GitHub repository of the Rocker project (https://github.com/rocker-org), 
+and in the linked GitHub repository, 
 which provides a transparent versioned history of all changes made to these recipes,
 as well as documentation, a community wiki, and issue trackers for discussing proposed
 changes, bugs, improvements to the Dockerfiles and troubleshoot any issues users may encounter.
-Having these public source files built automatically by a trusted provider (Docker Hub),
-rather than built locally and uploaded only in binary form provides is also useful from a
-security perspective in avoiding malware. 
+Having these public source files built automatically by a trusted provider (Docker Hub), rather than built locally and uploaded as binaries, is also useful from a security perspective in avoiding malware. 
 
 ### Community Optimized
 
