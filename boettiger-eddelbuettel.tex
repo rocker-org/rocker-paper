@@ -85,7 +85,8 @@ knowledge many would-be users may not have.
 
 For instance, on any platform wiht Docker installed, the following
 Docker command will launch a Rocker container providing the
-rstudio-server environment over a web interface.
+RStudio\textsuperscript{\textregistered} server environment over a web
+interface.
 
 \begin{verbatim}
 wget -qO- https://get.docker.com/ | sh 
@@ -94,8 +95,8 @@ sudo docker run -p 8787:8787 -e PASSWORD=<PICK-A-PASSWORD> rocker/rstudio
 
 The \texttt{docker\ run} option \texttt{-p} sets the port on which
 RStudio\textsuperscript{\textregistered} will appear, for which 8787 is
-the default (adding your user to the docker group to avoids the need for
-a \texttt{sudo} command to call \texttt{docker}:
+the default (adding your user to the docker group avoids the need for a
+\texttt{sudo} command to call \texttt{docker}:
 \texttt{sudo\ usermod\ -g\ docker\ \$USER}). Many academic and
 commercial cloud providers make it possible to execute such code
 snippets when a container is launched, without ever needing to
@@ -169,16 +170,16 @@ container using
 docker exec -ti <container-id> bash
 \end{verbatim}
 
-which can be useful for administrative tasks such as installing system
-dependencies. All Rocker images can also be run as an interactive R,
-RScript or bash shell without running RStudio, which can be useful for
-batch jobs or for anyone who prefers that environment.
+\noindent which can be useful for administrative tasks such as
+installing system dependencies. All Rocker images can also be run as an
+interactive R, RScript or bash shell without running RStudio, which can
+be useful for batch jobs or for anyone who prefers that environment.
 
 As with any interactive Docker container, users should specify the
 terminal (\texttt{-t}) and interactive (\texttt{-i}) flags, (here
 combined with interactive as \texttt{-ti}), and specify the desired
 executable environment (\emph{e.g.}, \texttt{R}, though other common
-options may be \texttt{Rscript} or \texttt{bash}):
+options could be \texttt{Rscript} or \texttt{bash}):
 
 \begin{verbatim}
 docker run --rm -ti rocker/tidyverse R
@@ -197,7 +198,7 @@ sandboxed environment, isolated from software and potentially from other
 data on the machine. Many users are reluctant to upgrade their suite of
 installed packages, which may break their existing code or even their R
 environment if the installation goes poorly. However, upgrading packages
-and/or the R environment is often necessary to run analysis of a
+and/or the R environment is often necessary to run analyses from a
 colleague, or access more recent methods. Rocker offers an easy
 solution. For instance, a user can run R code requiring the most recent
 versions of R and related packages inside a Rocker container without
@@ -225,8 +226,8 @@ these users root privileges in the container still leaves them sandboxed
 from the host container.\\
 Sandboxing also serves an important function in reproducible research by
 making it easier to test a specified environment in isolation from the
-host machine. Unlike traditional virtual machines, these containers do
-not impose a large footprint of reserved resources as a typical host can
+host machine. Unlike traditional virtual machines, containers do not
+impose a large footprint of reserved resources as a typical host can
 easily support 100s of containers \citep{what-docker}.
 
 \subsubsection{Transparent}\label{transparent}
@@ -269,7 +270,7 @@ maintainer and other Debian developers, and both direct and indirect
 feedback from the experience and user-generated documentation from many
 early adopters in the R community has helped shape and strengthen the
 project over the past few years. Widespread use of the Rocker image
-helps promote both testing of these choices and contributions further
+helps promote both testing of these choices and contributions, further
 tweaking the configuration from many members of the R community.
 
 \subsubsection{Versioned}\label{versioned}
@@ -292,11 +293,11 @@ Users building on the version-tagged images will by default use the MRAN
 snapshot mirror \citep{MRAN} associated with the most recent date for
 which that image was current. This ensures that a Dockerfile building
 \texttt{FROM\ rocker/verse:3.4.1} will only install R package versions
-that were available on CRAN on 2017-06-30, that is, the day R 3.4.1 was
-released. This default can of course be overwritten in the standard R
-manner, \emph{e.g.}, by specifying a different CRAN mirror explicitly in
-any command to \texttt{install.packages()}, or by adjusting the default
-CRAN mirror in
+that were available on CRAN on 2017-06-30, \emph{i.e.}, the day R 3.4.1
+was released. This default can of course be overwritten in the standard
+R manner, \emph{e.g.}, by specifying a different CRAN mirror explicitly
+in any command to install packages, \emph{e.g.},
+\texttt{install.packages()}, or by adjusting the default CRAN mirror in
 \texttt{options(repo=\textless{}CRAN-MIRROR\textgreater{})} in an
 \texttt{.Rprofile}. Note that the MRAN date associated with the current
 release (\emph{e.g.}, \texttt{3.4.2} at the time of writing) will
@@ -330,13 +331,13 @@ communities.
 To make extensions transparent and persistent, Rocker images can be
 extended by any user by writing their own Dockerfiles based on an
 appropriate Rocker image. The Dockerfiles in the Rocker stack should
-themselves provide a simple of example of this, (as described in the
+themselves provide a simple example of this, (as described in the
 following section).\\
 A user begins by selecting an appropriate base image for their needs: if
 the RStudio\textsuperscript{\textregistered} interface is desired, a
 user might start with \texttt{FROM\ rocker/rstudio}; an image for
 testing an R package with compiled code might use
-\texttt{FROM\ rocker/r-devel-san}, an image for reproducing a data
+\texttt{FROM\ rocker/r-devel-san}, and an image for reproducing a data
 analysis will probably select a stable version tag in addition to an
 appropriate base library, \emph{e.g.},:
 \texttt{FROM\ rocker/tidyverse:3.4.1} Users can easily add additional
@@ -367,7 +368,7 @@ and hosted on the Docker Hub, \url{https://hub.docker.com/r/rocker}.
 Source Dockerfiles, supporting scripts and documentation are hosted on
 GitHub under the organization \texttt{rocker-org},
 \url{https://github.com/rocker-org}. The issue tracker and pull requests
-are used for community input, discussions and contributions to these
+are used for community input, discussions, and contributions to these
 images. The Rocker project wiki,
 \url{https://github.com/rocker-org/rocker/wiki}, provides a place to
 synthesize community-contributed documentation, use-cases, and other
@@ -379,10 +380,10 @@ Project}\label{images-in-the-rocker-project}
 The Rocker project aims to provide a small core of Docker images that
 serve as convenient `base' images on which other users can build custom
 R environments by writing their own Dockerfiles, while also providing a
-`batteries included' approach of images that can be used out of the box.
+`batteries included' approach to images that can be used out of the box.
 The challenges of balancing diverse needs driven by very different use
 cases against the overarching goals of creating images that are still
-sufficiently light-weight, easy to use and easy to maintain is a
+sufficiently light-weight, easy to use, and easy to maintain is a
 difficult art. The implementation in both individual Rocker images and
 image stacks can never perfect that balance for everyone, but today
 reflects the considerable community input and testing over the past few
@@ -390,7 +391,7 @@ years.
 
 All Rocker images are based on the Debian Linux distribution. The Debian
 platform provides a small base image, the well-known \texttt{apt}
-package management system and rich ecosystem of software libraries,
+package management system, and a rich ecosystem of software libraries,
 making it the base image of choice for Docker images, including many of
 the ``official'' images maintained by Docker's own development team. The
 Debian platform is also perhaps the best-supported Linux platform within
@@ -471,25 +472,26 @@ actively maintained by the Rocker development team (Table 1).
 the stack each build directly from \texttt{r-base}. The \texttt{r-base}
 image is unique in that it is designated as the official image for the R
 language by the Docker organization itself. This official image is
-reviewed and then built by employees of Docker Inc based on a Dockerfile
-maintained by the Rocker team. Consequently, users should refer to this
-image in Docker commands without an organization namespace, \emph{e.g.},
-\texttt{docker\ run\ -ti\ r-base} to access the official image. All
-other images in the Rocker project are not individually reviewed and
-built by Docker Inc and must be referenced using the \texttt{rocker}
-namespace, \emph{e.g.}, \texttt{docker\ run\ -ti\ rocker/r-devel}.
+reviewed and then built by employees of Docker Inc. based on a
+Dockerfile maintained by the Rocker team. Consequently, users should
+refer to this image in Docker commands without an organization
+namespace, \emph{e.g.}, \texttt{docker\ run\ -ti\ r-base} to access the
+official image. All other images in the Rocker project are not
+individually reviewed and built by Docker Inc. and must be referenced
+using the \texttt{rocker} namespace, \emph{e.g.},
+\texttt{docker\ run\ -ti\ rocker/r-devel}.
 
 Several of the images in this stack are oriented towards the R
 development community: \texttt{r-devel}, \texttt{drd},
-\texttt{r-devel-san} \& \texttt{r-devel-ubsan-clang} all add a copy of
-the development version of R side-by-side the current release of R
-provided by \texttt{r-base}. On these images, the development version is
-aliased to \texttt{RD} to distinguish from the current release,
-\texttt{R}. As the names suggest, each provide slightly different
-configurations. Of particular interest are the images providing
-development R built with support for C/C++ address and
-undefined-behavior sanitizers, which are somewhat more difficult to
-configure \citep{edd_sanitizers}.
+\texttt{r-devel-san}, and \texttt{r-devel-ubsan-clang} which all add a
+copy of the development version of R side-by-side to the current release
+of R provided by \texttt{r-base}. On these images, the development
+version is aliased to \texttt{RD} to distinguish from the current
+release, \texttt{R}. As the names suggest, each provide slightly
+different configurations. Of particular interest are the images
+providing development R built with support for C/C++ address and
+undefined-behavior sanitizers, which are somewhat difficult to configure
+\citep{edd_sanitizers}.
 
 As these images focus on developers and/or as base images for custom
 uses, this stack does not include many specific R packages. Additional
@@ -517,10 +519,10 @@ stable versioned stack.
 \textbf{Build schedule}: The official \texttt{r-base} image is rebuilt
 by Docker following any updates to the official \texttt{debian} images
 (roughly every few weeks). The rest of the stack uses build triggers
-that rebuild the images either whenever \texttt{r-base} is updated, or
-the Dockerfile sources are updated on the corresponding GitHub
-repository. The only exception in this stack is the \texttt{drd} image,
-which is rebuilt each week by a \texttt{cron} trigger.
+that rebuild the images whenever \texttt{r-base} is updated or the
+Dockerfile sources are updated on the corresponding GitHub repository.
+The only exception in this stack is the \texttt{drd} image, which is
+rebuilt each week by a \texttt{cron} trigger.
 
 \begin{longtable}[]{@{}llll@{}}
 \caption{The \texttt{debian:testing} image stack}\tabularnewline
@@ -560,7 +562,7 @@ official image with current version of R\strut
 \begin{minipage}[t]{0.20\columnwidth}\raggedright\strut
 \href{https://hub.docker.com/r/rocker/r-devel}{r-devel}\strut
 \end{minipage} & \begin{minipage}[t]{0.50\columnwidth}\raggedright\strut
-R-devel added side-by-side r-base (using alias \texttt{RD})\strut
+R-devel added side-by-side to r-base (using alias \texttt{RD})\strut
 \end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
 1 GB\strut
 \end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedright\strut
@@ -587,7 +589,7 @@ as r-devel, but built with compiler sanitizers\strut
 \begin{minipage}[t]{0.20\columnwidth}\raggedright\strut
 \href{https://hub.docker.com/r/rocker/r-devel-ubsan-clang}{r-devel-ubsan-clang}\strut
 \end{minipage} & \begin{minipage}[t]{0.50\columnwidth}\raggedright\strut
-Sanitizers, clang c compiler (instead of gcc)\strut
+sanitizers, clang c compiler (instead of gcc)\strut
 \end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
 1.1 GB\strut
 \end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedright\strut
@@ -624,16 +626,16 @@ image & description & size & downloads\tabularnewline
 image & description & size & downloads\tabularnewline
 \midrule
 \endhead
-\href{https://hub.docker.com/r/rocker/r-ver}{r-ver} & Version-stable
+\href{https://hub.docker.com/r/rocker/r-ver}{r-ver} & version-stable
 base R \& src build tools & 219 MB & 6,000\tabularnewline
-\href{https://hub.docker.com/r/rocker/rstudio}{rstudio} & Adds rstudio &
+\href{https://hub.docker.com/r/rocker/rstudio}{rstudio} & adds rstudio &
 334 MB & 314,000\tabularnewline
-\href{https://hub.docker.com/r/rocker/tidyverse}{tidyverse} & Adds
+\href{https://hub.docker.com/r/rocker/tidyverse}{tidyverse} & adds
 tidyverse \& devtools & 656 MB & 83,000 \footnote{This figure includes
   49,000 downloads under the earlier name \texttt{hadleyverse}.}\tabularnewline
-\href{https://hub.docker.com/r/rocker/verse}{verse} & Adds java, tex \&
+\href{https://hub.docker.com/r/rocker/verse}{verse} & adds java, tex \&
 publishing-related packages & 947 MB & 9,000\tabularnewline
-\href{https://hub.docker.com/r/rocker/geospatial}{geospatial} & Adds
+\href{https://hub.docker.com/r/rocker/geospatial}{geospatial} & adds
 geospatial libraries & 1.3 GB & 4,000\tabularnewline
 \bottomrule
 \end{longtable}
@@ -650,14 +652,14 @@ version desired using an image tag, \emph{e.g.},
 \texttt{rocker/r-ver:3.3.1} will refer to an image with R version 3.3.1
 installed. Omitting the tag is equivalent to using the tag
 \texttt{latest}, which, as the name implies, will always point to an
-image using the current R release. Thus, users wanting to create
-downstream Dockerfiles which are based on the current release at time
-(but will continue to reconstruct the same environment in the future
-after newer R versions are released) should explicitly include the
-corresponding version tag, \emph{e.g.}, \texttt{rocker/r-ver:3.4.2} at
-the time of writing, and not the \texttt{latest} tag. Users can also run
-the current development version of R using the tag \texttt{devel}, which
-is built nightly from R-devel sources from \texttt{subversion}.
+image using the current R release. Thus, users who want to create
+downstream Dockerfiles, which are based on the current release at the
+time (but will continue to reconstruct the same environment in the
+future after newer R versions are released), should explicitly include
+the corresponding version tag, \emph{e.g.}, \texttt{rocker/r-ver:3.4.2}
+at the time of writing, and not the \texttt{latest} tag. Users can also
+run the current development version of R using the tag \texttt{devel},
+which is built nightly from R-devel sources from \texttt{subversion}.
 
 \textbf{MRAN archives}: To facilitate installation of only
 contemporaneous versions of R packages on these images, the default CRAN
@@ -695,7 +697,7 @@ second or third position of the tag is identical to asking for the most
 recent version: i.e. \texttt{rocker/verse:3.3} is the same as
 \texttt{rocker/verse:3.3.3}, and \texttt{rocker/verse:3} is (at the time
 of writing), \texttt{rocker/verse:3.4.2}. This is accomplished using
-post-build hooks in Docker Hub, see examples at
+post-build hooks in Docker Hub---see examples at
 \url{https://github.com/rocker-org/rocker-versioned/} for details.
 
 \textbf{Installation}: In this stack, the desired version of R is always
@@ -729,7 +731,7 @@ corresponding Dockerfiles (found in the GitHub repositories
 triggers to Docker Hub to rebuild the \texttt{latest} and \texttt{devel}
 tagged images throughout the stack. To decrease load on the hub, build
 triggers for the numeric version tags are sent monthly. Although the
-Dockerfiles for older R versions installs an almost-identical software
+Dockerfiles for older R versions install an almost-identical software
 environment every time, the monthly rebuilding of these images on Docker
 Hub ensures they continue to receive Debian security updates from
 upstream, and proves the build recipe still executes successfully. Note
@@ -772,8 +774,9 @@ Dockerfiles or \texttt{installed.packages()} list directly for a
 complete list of installed packages. The \texttt{verse} library adds
 commonly-used dependencies, notably a large but not comprehensive LaTeX
 environment and Java development libraries. Previously, the Rocker
-project provided the image \texttt{hadleyverse} which was since divided
-into \texttt{tidyverse} and \texttt{verse} based on community input.
+project provided the image \texttt{hadleyverse} which has since been
+divided into \texttt{tidyverse} and \texttt{verse} based on community
+input.
 
 \begin{longtable}[]{@{}lllll@{}}
 \caption{Available tags in the \texttt{rocker-versioned}
