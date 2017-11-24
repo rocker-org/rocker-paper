@@ -394,13 +394,11 @@ from binaries, since the package manager (`apt`) manages the necessary
 from source.  Basing this stack on `debian:testing` means that much more
 recent versions of commonly-used libraries and compilers are available
 as binaries than would be found in a Debian stable release.  In order
-to provide access to the most recent available binaries, this stack uses
-apt-pinning \citep{apt_pinning} to allow the `apt` package manager to also
-install binaries from `debian:unstable`, which represents the most recent,
-bleeding edge of packages built for Debian when necessary.  For instance,
-the `r-base` image provided by Rocker installs the most recent version of
-R as a binary from Debian `unstable`.  Similarly, recent versions of many
-popular R packages can also be installed through the package manager,
+to provide _optional_ access to the most recent available binaries, this stack uses
+apt-pinning \citep{apt_pinning} to allow the `apt` package manager to _selectively_
+install binaries from `debian:unstable`, which represents the most recent
+set of packages built for Debian. Similarly, recent versions of many
+popular R packages can also be installed pre-built through the package manager,
 _e.g._, `apt-get install r-cran-xml`.  This can be particularly helpful
 for packages with external system dependencies (such as `libxml2-dev`
 in this example) which cannot be installed from the R console as they 
@@ -408,8 +406,7 @@ are system dependencies rather than R packages installed from within R.
 We should note, however, that only about 500 of the over
 11,000 CRAN packages are available as Debian packages. 
 
-As the names `testing` and `unstable` imply, this approach is not
-without challenges.  The particular version of any given package can
+As the names `testing` and `unstable` imply, particular versions of package can
 change as packages move from `unstable` into `testing`. New versions
 are sent to `unstable` during the normal course of Debian development.
 This can occasionally break an previously-working installation command
@@ -423,17 +420,15 @@ interactions with other packages in their dependency graph. That way,
 `unstable` serves as validation lab which leaves `testing` reasonably 
 stable yet current.
 
-Relative to `stable`, the `testing` stack thus offers the following advantages: 
-
-1. These Dockerfiles are easy to develop and extend because almost all software can be installed through the package manager.
-2. These Dockerfiles always install the most recent available software.
-3. These Dockerfiles can almost always build relatively quickly.
-
-and these down-sides:
-
-1. These Dockerfiles require occasional minor maintenance to ensure successful builds. (_e.g._, changing an installation directive from `unstable` to `testing` or vice versa).
-2. The resulting images are inherently dynamic: rebuilding the same Dockerfile months or years apart will generate images with significantly different versions of software installed.
-3. The use of apt pinning may be unfamiliar to some users, where the user must ultimately be responsible to ensure compatibility \citep{apt_pinning}.
+Relative to `stable`, the `testing` stack thus offers some advantages
+as almost all software can be installed through the package
+manager. Installation of binary packages from `testing` generally provides
+the most recent available software, and installs it quickly as a
+binary. On the other hand, these Dockerfiles may require occasional 
+maintenance when packages migrate and/or versions change. The resulting images 
+are also inherently dynamic: rebuilding the same Dockerfile months or years 
+apart will generate images with significantly different versions of software 
+installed as the pool of underlying packages changes through time.
 
 ### Images overview
 
