@@ -249,7 +249,7 @@ trusted provider (Docker Hub), rather than built locally and uploaded as
 binaries, is also useful from a security perspective in avoiding
 malware.
 
-\subsubsection{Community Optimized}\label{community-optimized}
+\subsubsection{Community optimized}\label{community-optimized}
 
 Having a shared, transparent computational environment created by a
 publicly hosted, reproducible recipe facilitates community input into
@@ -264,7 +264,7 @@ reference implementation of the R environment as well as a platform for
 comparing and discussing these concerns which are often overlooked
 elsewhere. Issues and Pull Requests on the Rocker repositories on GitHub
 attest to some of these discussions and improvements. In particular,
-input from the Docker Inc employees through the official approval
+input from the Docker Inc.~employees through the official approval
 process for the \texttt{r-base} image, expertise from the Debian R
 maintainer and other Debian developers, and both direct and indirect
 feedback from the experience and user-generated documentation from many
@@ -472,12 +472,12 @@ actively maintained by the Rocker development team (Table 1).
 the stack each build directly from \texttt{r-base}. The \texttt{r-base}
 image is unique in that it is designated as the official image for the R
 language by the Docker organization itself. This official image is
-reviewed and then built by employees of Docker Inc. based on a
+reviewed and then built by employees of Docker Inc.~based on a
 Dockerfile maintained by the Rocker team. Consequently, users should
 refer to this image in Docker commands without an organization
 namespace, \emph{e.g.}, \texttt{docker\ run\ -ti\ r-base} to access the
 official image. All other images in the Rocker project are not
-individually reviewed and built by Docker Inc. and must be referenced
+individually reviewed and built by Docker Inc.~and must be referenced
 using the \texttt{rocker} namespace, \emph{e.g.},
 \texttt{docker\ run\ -ti\ rocker/r-devel}.
 

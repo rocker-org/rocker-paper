@@ -237,7 +237,7 @@ as well as documentation, a community wiki, and issue trackers for discussing pr
 changes, bugs, improvements to the Dockerfiles and troubleshoot any issues users may encounter.
 Having these public source files built automatically by a trusted provider (Docker Hub), rather than built locally and uploaded as binaries, is also useful from a security perspective in avoiding malware. 
 
-### Community Optimized
+### Community optimized
 
 Having a shared, transparent computational environment created by a publicly hosted, reproducible
 recipe facilitates community input into configuration details. R and many of its packages
@@ -250,7 +250,7 @@ This helps create a more finely tuned, optimized reference
 implementation of the R environment as well as a platform for comparing and discussing these 
 concerns which are often overlooked elsewhere.  Issues and Pull Requests on the Rocker 
 repositories on GitHub attest to some of these discussions and improvements.
-In particular, input from the Docker Inc employees through the official approval process
+In particular, input from the Docker Inc.\ employees through the official approval process
 for the `r-base` image, expertise from the Debian R maintainer and other Debian developers,
 and both direct and indirect feedback from the experience and user-generated documentation
 from many early adopters in the R community has helped shape and strengthen the project
@@ -438,11 +438,11 @@ actively maintained by the Rocker development team (Table 1).
 each build directly from `r-base`.  The `r-base` image is unique in
 that it is designated as the official image for the R language by the
 Docker organization itself.  This official image is reviewed and then
-built by employees of Docker Inc. based on a Dockerfile maintained by
+built by employees of Docker Inc.\ based on a Dockerfile maintained by
 the Rocker team.  Consequently, users should refer to this image in
 Docker commands without an organization namespace, _e.g._, `docker run -ti r-base` 
 to access the official image.  All other images in the Rocker
-project are not individually reviewed and built by Docker Inc. and must
+project are not individually reviewed and built by Docker Inc.\ and must
 be referenced using the `rocker` namespace,
 _e.g._, `docker run -ti rocker/r-devel`.
 
