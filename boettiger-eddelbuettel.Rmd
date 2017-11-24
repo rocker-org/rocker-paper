@@ -50,7 +50,7 @@ instance of a static Docker image.
 A Docker "image" is a binary archive of that software,
 analogous to an R binary package: a given version is downloaded only
 once, and can then be "run" to create a container whenever it is needed.
-A "Dockerfile" is a recipe, the source-code, to create a Docker image.  
+A "Dockerfile" is a recipe, the source-code, to create a Docker image.
 Pre-built Docker images are publicly available through Docker Hub, which
 plays a role for central distribution similar to CRAN in our analogy.  Development
 and contributions to the Rocker project focus on the construction, organization
@@ -213,7 +213,7 @@ is required to launch Docker containers, though not to access containers already
 running and providing some service such as RStudio. Users logging into a container
 through the RStudio\textsuperscript{\textregistered} interface do not by default have root privileges, though are able
 to install R packages. Granting these users root privileges in the container still leaves
-them sandboxed from the host container.   
+them sandboxed from the host container.
 Sandboxing also serves an important function
 in reproducible research by making it easier to test a specified environment
 in isolation from the host machine.
@@ -307,12 +307,12 @@ individuals and communities.
 To make extensions transparent and persistent, Rocker images can be extended by
 any user by writing their own Dockerfiles based on an appropriate Rocker image.
 The Dockerfiles in the Rocker stack should themselves provide a simple example
-of this, (as described in the following section).  
+of this, (as described in the following section).
 A user begins by selecting an appropriate base image for their needs: 
 if the RStudio\textsuperscript{\textregistered} interface is desired, a user might start with `FROM rocker/rstudio`;
 an image for testing an R package with compiled code might use `FROM rocker/r-devel-san`,
 and an image for reproducing a data analysis will probably select a stable version tag
-in addition to an appropriate base library, _e.g._,: `FROM rocker/tidyverse:3.4.1`
+in addition to an appropriate base library, _e.g._,: `FROM rocker/tidyverse:3.4.1`.
 Users can easily add additional software to any running Rocker image using
 the standard R and Debian mechanisms. Details on how to extend Rocker images can
 be found at <https://rocker-project.org>. 
@@ -409,7 +409,7 @@ We should note, however, that only about 500 of the over
 As the names `testing` and `unstable` imply, particular versions of package can
 change as packages move from `unstable` into `testing`. New versions
 are sent to `unstable` during the normal course of Debian development.
-This can occasionally break an previously-working installation command
+This can occasionally break a previously-working installation command
 in a Dockerfile until the maintainer redirects the package manager to
 install a package from the `unstable` sources that could previously
 be installed from `testing`, or vice versa (using the `-t` option in

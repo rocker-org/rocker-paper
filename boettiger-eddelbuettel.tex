@@ -40,11 +40,11 @@ container is an active instance of a static Docker image. A Docker
 ``image'' is a binary archive of that software, analogous to an R binary
 package: a given version is downloaded only once, and can then be
 ``run'' to create a container whenever it is needed. A ``Dockerfile'' is
-a recipe, the source-code, to create a Docker image.\\
-Pre-built Docker images are publicly available through Docker Hub, which
-plays a role for central distribution similar to CRAN in our analogy.
-Development and contributions to the Rocker project focus on the
-construction, organization and maintenance of these Dockerfiles.
+a recipe, the source-code, to create a Docker image. Pre-built Docker
+images are publicly available through Docker Hub, which plays a role for
+central distribution similar to CRAN in our analogy. Development and
+contributions to the Rocker project focus on the construction,
+organization and maintenance of these Dockerfiles.
 
 \section{Design principles and use
 cases}\label{design-principles-and-use-cases}
@@ -223,12 +223,12 @@ logging into a container through the
 RStudio\textsuperscript{\textregistered} interface do not by default
 have root privileges, though are able to install R packages. Granting
 these users root privileges in the container still leaves them sandboxed
-from the host container.\\
-Sandboxing also serves an important function in reproducible research by
-making it easier to test a specified environment in isolation from the
-host machine. Unlike traditional virtual machines, containers do not
-impose a large footprint of reserved resources as a typical host can
-easily support 100s of containers \citep{what-docker}.
+from the host container. Sandboxing also serves an important function in
+reproducible research by making it easier to test a specified
+environment in isolation from the host machine. Unlike traditional
+virtual machines, containers do not impose a large footprint of reserved
+resources as a typical host can easily support 100s of containers
+\citep{what-docker}.
 
 \subsubsection{Transparent}\label{transparent}
 
