@@ -8,11 +8,13 @@ author:
     address:
     - ESPM Department, University of California,
     - 130 Mulford Hall Berkeley, CA 94720-3114, USA
+    - ORCiD \href{https://orcid.org/0000-0002-1642-628X}{0000-0002-1642-628X}
     email:  cboettig@berkeley.edu
   - name: Dirk Eddelbuettel
     affiliation: Debian and R Projects; Ketchum Trading
     address: 
     - Chicago, IL, USA
+    - ORCiD \href{https://orcid.org/0000-0001-6419-907X}{0000-0001-6419-907X}
     email:  edd@debian.org
 abstract: >
   We describe the Rocker project, which provides a widely-used suite of Docker images
