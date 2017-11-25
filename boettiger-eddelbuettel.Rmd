@@ -84,7 +84,7 @@ Rocker containers are also easy to run locally on most modern laptops
 using Windows, MacOS, or Linux-based operating systems. 
 By sharing volumes with the local host, users can still manipulate
 files with familiar, native tools while performing computation through a reproducible,
-containerized environment \citep{Boettiger2015}. Being
+containerized environhment \citep{Boettiger2015}. Being
 able to test code in a predictable, pre-configured R environment on a
 local machine and to then run the same code in an identical environment on a
 remote server (_e.g._, for access to greater RAM, more processors, or merely
@@ -144,7 +144,7 @@ the native Docker commands, _e.g._
 singularity exec docker://rocker/tidyverse:latest R
 ```
 
-More details can be found in the Singularity documentation.
+\noindent More details can be found in the Singularity documentation.
 
 ### Interfaces
 
@@ -328,7 +328,7 @@ images are developed and maintained independently of the Rocker project,
 such as the `popgen` image of population-genetics-oriented software developed 
 by the National Evolutionary Synthesis Center (NESCent). Rocker images are also 
 being used as base Docker images in the NSF sponsored Whole Tale project for
-reproducible computing \citep{wholetale}, and are heavily used by the R-Hub
+reproducible computing \citep{wholetale}, and are heavily used by the \CRANpkg{rhub}
 project in automated package testing \citep{rhub}.
 
 
@@ -361,7 +361,7 @@ testing over the past few years.
 
 
 All Rocker images are based on the Debian Linux distribution.
-The Debian platform provides a small base image, the well-known `apt`
+It provides a small base image, the well-known `apt`
 package management system, and a rich ecosystem of software libraries,
 making it the base image of choice for Docker images, including many
 of the "official" images maintained by Docker's own development team.
@@ -533,7 +533,7 @@ from R-devel sources from `subversion`.
 **MRAN archives**: To facilitate installation of only contemporaneous
 versions of R packages on these images, the default CRAN mirror from which
 to install R packages is fixed to a snapshot of CRAN corresponding to
-the last date for which that version of R was current (e.g. `3.4.2` was released
+the last date for which that version of R was current (_e.g._, `3.4.2` was released
 on 2017-09-28, thus `3.4.1` is pinned to the MRAN snapshot for that date). These
 snapshots are provided by the MRAN archive created by Revolution
 Analytics (now part of Microsoft). It archives daily snapshots
@@ -547,7 +547,7 @@ selects the Bioconductor release corresponding to the version of R in use.
 
 **Version tags**:  The version tags are propagated throughout this
 stack: _e.g._, `rocker/tidyverse:devel` will provide the currently-released
-versions of the R packages in the `tidyverse` \citep{tidyverse}
+versions of the R packages in the \CRANpkg{tidyverse} \citep{tidyverse}
 installed on the nightly build of R-devel.  Developers building packages
 on this stack are encouraged to tag their images accordingly as well.
 Table 3 indicates which versions of R are currently available in the
@@ -561,7 +561,7 @@ over the long term, while the tag for the current version, `latest`,
 and `devel` may be tweaked to accommodate new features or dependencies.
 Version tags also obey semantics so that omitting the second or third
 position of the tag is identical to asking for the most recent version:
-i.e. `rocker/verse:3.3` is the same as `rocker/verse:3.3.3`, and 
+_i.e._, `rocker/verse:3.3` is the same as `rocker/verse:3.3.3`, and 
 `rocker/verse:3` is (at the time of writing), `rocker/verse:3.4.2`.
 This is accomplished using post-build hooks in Docker Hub---see examples at
 <https://github.com/rocker-org/rocker-versioned/> for details.  

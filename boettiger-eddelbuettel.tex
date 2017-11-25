@@ -73,7 +73,7 @@ server hardware. Rocker containers are also easy to run locally on most
 modern laptops using Windows, MacOS, or Linux-based operating systems.
 By sharing volumes with the local host, users can still manipulate files
 with familiar, native tools while performing computation through a
-reproducible, containerized environment \citep{Boettiger2015}. Being
+reproducible, containerized environhment \citep{Boettiger2015}. Being
 able to test code in a predictable, pre-configured R environment on a
 local machine and to then run the same code in an identical environment
 on a remote server (\emph{e.g.}, for access to greater RAM, more
@@ -145,7 +145,7 @@ much like the native Docker commands, \emph{e.g.}
 singularity exec docker://rocker/tidyverse:latest R
 \end{verbatim}
 
-More details can be found in the Singularity documentation.
+\noindent More details can be found in the Singularity documentation.
 
 \subsubsection{Interfaces}\label{interfaces}
 
@@ -332,15 +332,14 @@ To make extensions transparent and persistent, Rocker images can be
 extended by any user by writing their own Dockerfiles based on an
 appropriate Rocker image. The Dockerfiles in the Rocker stack should
 themselves provide a simple example of this, (as described in the
-following section).\\
-A user begins by selecting an appropriate base image for their needs: if
-the RStudio\textsuperscript{\textregistered} interface is desired, a
-user might start with \texttt{FROM\ rocker/rstudio}; an image for
-testing an R package with compiled code might use
-\texttt{FROM\ rocker/r-devel-san}, and an image for reproducing a data
-analysis will probably select a stable version tag in addition to an
-appropriate base library, \emph{e.g.},:
-\texttt{FROM\ rocker/tidyverse:3.4.1} Users can easily add additional
+following section). A user begins by selecting an appropriate base image
+for their needs: if the RStudio\textsuperscript{\textregistered}
+interface is desired, a user might start with
+\texttt{FROM\ rocker/rstudio}; an image for testing an R package with
+compiled code might use \texttt{FROM\ rocker/r-devel-san}, and an image
+for reproducing a data analysis will probably select a stable version
+tag in addition to an appropriate base library, \emph{e.g.},:
+\texttt{FROM\ rocker/tidyverse:3.4.1}. Users can easily add additional
 software to any running Rocker image using the standard R and Debian
 mechanisms. Details on how to extend Rocker images can be found at
 \url{https://rocker-project.org}.
@@ -357,7 +356,7 @@ maintained independently of the Rocker project, such as the
 by the National Evolutionary Synthesis Center (NESCent). Rocker images
 are also being used as base Docker images in the NSF sponsored Whole
 Tale project for reproducible computing \citep{wholetale}, and are
-heavily used by the R-Hub project in automated package testing
+heavily used by the \CRANpkg{rhub} project in automated package testing
 \citep{rhub}.
 
 \section{Rocker organization and
@@ -389,11 +388,11 @@ image stacks can never perfect that balance for everyone, but today
 reflects the considerable community input and testing over the past few
 years.
 
-All Rocker images are based on the Debian Linux distribution. The Debian
-platform provides a small base image, the well-known \texttt{apt}
-package management system, and a rich ecosystem of software libraries,
-making it the base image of choice for Docker images, including many of
-the ``official'' images maintained by Docker's own development team. The
+All Rocker images are based on the Debian Linux distribution. It
+provides a small base image, the well-known \texttt{apt} package
+management system, and a rich ecosystem of software libraries, making it
+the base image of choice for Docker images, including many of the
+``official'' images maintained by Docker's own development team. The
 Debian platform is also perhaps the best-supported Linux platform within
 the R community, including an active \texttt{r-sig-debian} listserve.
 The relatively long period between stable Debian releases (roughly two
@@ -441,7 +440,7 @@ the over 11,000 CRAN packages are available as Debian packages.
 As the names \texttt{testing} and \texttt{unstable} imply, particular
 versions of package can change as packages move from \texttt{unstable}
 into \texttt{testing}. New versions are sent to \texttt{unstable} during
-the normal course of Debian development. This can occasionally break an
+the normal course of Debian development. This can occasionally break a
 previously-working installation command in a Dockerfile until the
 maintainer redirects the package manager to install a package from the
 \texttt{unstable} sources that could previously be installed from
@@ -665,21 +664,22 @@ which is built nightly from R-devel sources from \texttt{subversion}.
 contemporaneous versions of R packages on these images, the default CRAN
 mirror from which to install R packages is fixed to a snapshot of CRAN
 corresponding to the last date for which that version of R was current
-(e.g. \texttt{3.4.2} was released on 2017-09-28, thus \texttt{3.4.1} is
-pinned to the MRAN snapshot for that date). These snapshots are provided
-by the MRAN archive created by Revolution Analytics (now part of
-Microsoft). It archives daily snapshots of all of CRAN from which a user
-can install packages with the usual \texttt{install.packages()} function
-\citep{MRAN}. Users can always override this default by passing any
-current CRAN repository explicitly. Unlike CRAN, Bioconductor only
-updates its repositories through bi-annual releases aligned to R's
-spring release schedule. Thus, Bioconductor packages can be installed in
-the usual way using \texttt{bioclite}, which automatically selects the
-Bioconductor release corresponding to the version of R in use.
+(\emph{e.g.}, \texttt{3.4.2} was released on 2017-09-28, thus
+\texttt{3.4.1} is pinned to the MRAN snapshot for that date). These
+snapshots are provided by the MRAN archive created by Revolution
+Analytics (now part of Microsoft). It archives daily snapshots of all of
+CRAN from which a user can install packages with the usual
+\texttt{install.packages()} function \citep{MRAN}. Users can always
+override this default by passing any current CRAN repository explicitly.
+Unlike CRAN, Bioconductor only updates its repositories through
+bi-annual releases aligned to R's spring release schedule. Thus,
+Bioconductor packages can be installed in the usual way using
+\texttt{bioclite}, which automatically selects the Bioconductor release
+corresponding to the version of R in use.
 
 \textbf{Version tags}: The version tags are propagated throughout this
 stack: \emph{e.g.}, \texttt{rocker/tidyverse:devel} will provide the
-currently-released versions of the R packages in the \texttt{tidyverse}
+currently-released versions of the R packages in the \CRANpkg{tidyverse}
 \citep{tidyverse} installed on the nightly build of R-devel. Developers
 building packages on this stack are encouraged to tag their images
 accordingly as well. Table 3 indicates which versions of R are currently
@@ -694,7 +694,7 @@ term, while the tag for the current version, \texttt{latest}, and
 \texttt{devel} may be tweaked to accommodate new features or
 dependencies. Version tags also obey semantics so that omitting the
 second or third position of the tag is identical to asking for the most
-recent version: i.e. \texttt{rocker/verse:3.3} is the same as
+recent version: \emph{i.e.}, \texttt{rocker/verse:3.3} is the same as
 \texttt{rocker/verse:3.3.3}, and \texttt{rocker/verse:3} is (at the time
 of writing), \texttt{rocker/verse:3.4.2}. This is accomplished using
 post-build hooks in Docker Hub---see examples at
