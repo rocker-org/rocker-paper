@@ -46,7 +46,7 @@ D.~Clark, A.~Culich, B.~Hamlin, and R.~Lovett.
 \bibitem[Csárdi(2017)]{rhub}
 G.~Csárdi.
 \newblock \emph{rhub: Connect to 'R-hub', from 'R'}, 2017.
-\newblock URL \url{https://github.com/r-hub/rhub}.
+\newblock URL \url{https://CRAN.R-project.org/package=rhub}.
 \newblock R package version 1.0.1.
 
 \bibitem[{Debian Project}(2017)]{apt_pinning}
